@@ -488,7 +488,7 @@ canvas {
       </div>
     </div>
     
-    <!-- === COLUMN 2: DEGRADATION CONTROLS === -->
+    <!-- === COLUMN 2: DEGRADATION & DISTORTION === -->
     <div class="main-col">
       <div class="card">
         <div class="card-header">
@@ -537,18 +537,19 @@ canvas {
       </div>
       <div class="card">
         <div class="card-header">
-            <h2>Weird Circuit (Distortion)</h2>
+            <h2>Distortion</h2>
         </div>
         <div class="card-content">
             <div class="control-group">
                 <label for="distortionType">Type</label>
                 <select id="distortionType">
                     <option value="none">None</option>
-                    <option value="foldback">Foldback</option>
-                    <option value="sine">Sine Warp</option>
-                    <option value="glitch">Glitch Rectifier</option>
                     <option value="overdrive">Gritty Overdrive</option>
                     <option value="fuzz">Fuzz Buzz</option>
+                    <option value="foldback">Foldback</option>
+                    <option value="sine">Sine Warp</option>
+                    <option value="bitwise">Bitwise Annihilator</option>
+                    <option value="chaos">Chaotic Driver</option>
                 </select>
             </div>
             <div class="control-group">
@@ -562,7 +563,7 @@ canvas {
     </div>
     </div>
 
-    <!-- === COLUMN 3: POST-PROCESSING & ACTIONS === -->
+    <!-- === COLUMN 3: FILTERS, FX & ACTIONS === -->
     <div class="main-col">
         <div class="card">
             <div class="card-header">
@@ -570,31 +571,58 @@ canvas {
             </div>
             <div class="card-content">
                 <div class="control-group">
-                    <label for="lowpassCutoff">Low-Pass Cutoff</label>
-                    <div class="slider-wrapper">
-                        <input type="range" id="lowpassCutoff" min="0" max="1000" value="1000">
-                        <span class="slider-label" id="lowpassValue">22kHz</span>
+                    <label for="filterType">Type</label>
+                    <select id="filterType">
+                        <option value="classic">Classic EQ</option>
+                        <option value="comb">Comb Filter</option>
+                        <option value="vowel">Vowel Morph</option>
+                    </select>
+                </div>
+                <div id="classicFilterControls">
+                    <div class="control-group">
+                        <label for="lowpassCutoff">Low-Pass Cutoff</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="lowpassCutoff" min="0" max="1000" value="1000">
+                            <span class="slider-label" id="lowpassValue">22kHz</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="highpassCutoff">High-Pass Cutoff</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="highpassCutoff" min="0" max="1000" value="0">
+                            <span class="slider-label" id="highpassValue">20Hz</span>
+                        </div>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label for="highpassCutoff">High-Pass Cutoff</label>
-                    <div class="slider-wrapper">
-                        <input type="range" id="highpassCutoff" min="0" max="1000" value="0">
-                        <span class="slider-label" id="highpassValue">20Hz</span>
+                <div id="weirdFilterControls" style="display: none;">
+                     <div class="control-group">
+                        <label for="filterAmount">Amount</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="filterAmount" min="0" max="100" value="50">
+                            <span class="slider-label" id="filterAmountValue">50%</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
          <div class="card">
             <div class="card-header">
-              <h2>Pitch Shift (Live)</h2>
+              <h2>Playback FX</h2>
             </div>
             <div class="card-content">
                 <div class="control-group">
-                    <label for="pitchSlider">Playback Rate</label>
+                    <label for="playbackType">Algorithm</label>
+                     <select id="playbackType">
+                        <option value="tape">Tape (Live)</option>
+                        <option value="granular">Granular Freeze</option>
+                        <option value="reverse_stutter">Reverse Stutter</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="playbackAmount" id="playbackAmountLabel">Rate</label>
                     <div class="slider-wrapper">
-                        <input type="range" id="pitchSlider" min="0.5" max="2" value="1" step="0.01">
-                        <span class="slider-label" id="pitchValue">1.00x</span>
+                        <input type="range" id="playbackAmount" min="0" max="100" value="50">
+                        <span class="slider-label" id="playbackAmountValue">1.00x</span>
                     </div>
                 </div>
             </div>
@@ -607,8 +635,8 @@ canvas {
                 <div class="control-group">
                     <label>Effect Order</label>
                     <div class="btn-group">
-                        <button id="orderDegradeFirst" class="btn order-btn active">Degrade → Circuit → Filter</button>
-                        <button id="orderFilterFirst" class="btn order-btn">Degrade → Filter → Circuit</button>
+                        <button id="orderDegradeFirst" class="btn order-btn active">Process → Filter</button>
+                        <button id="orderFilterFirst" class="btn order-btn">Filter → Process</button>
                     </div>
                 </div>
                  <div class="control-group">
@@ -658,14 +686,21 @@ const playheadProcessed = document.getElementById('playheadProcessed');
 const distortionTypeSelect = document.getElementById('distortionType');
 const distortionAmountSlider = document.getElementById('distortionAmount');
 const distortionValue = document.getElementById('distortionValue');
+const filterTypeSelect = document.getElementById('filterType');
+const classicFilterControls = document.getElementById('classicFilterControls');
+const weirdFilterControls = document.getElementById('weirdFilterControls');
+const filterAmountSlider = document.getElementById('filterAmount');
+const filterAmountValue = document.getElementById('filterAmountValue');
 const lowpassSlider = document.getElementById('lowpassCutoff');
 const lowpassValue = document.getElementById('lowpassValue');
 const highpassSlider = document.getElementById('highpassCutoff');
 const highpassValue = document.getElementById('highpassValue');
 const orderDegradeFirstBtn = document.getElementById('orderDegradeFirst');
 const orderFilterFirstBtn = document.getElementById('orderFilterFirst');
-const pitchSlider = document.getElementById('pitchSlider');
-const pitchValue = document.getElementById('pitchValue');
+const playbackTypeSelect = document.getElementById('playbackType');
+const playbackAmountSlider = document.getElementById('playbackAmount');
+const playbackAmountValue = document.getElementById('playbackAmountValue');
+const playbackAmountLabel = document.getElementById('playbackAmountLabel');
 const presetList = document.getElementById('presetList');
 const presetNameInput = document.getElementById('presetName');
 const savePresetBtn = document.getElementById('savePresetBtn');
@@ -713,13 +748,9 @@ function addEventListeners() {
     // Sliders
     intensitySlider.addEventListener('input', () => { intensityValue.textContent = `${intensitySlider.value}%`; });
     distortionAmountSlider.addEventListener('input', () => { distortionValue.textContent = `${distortionAmountSlider.value}%`; });
-    pitchSlider.addEventListener('input', () => { 
-        const rate = parseFloat(pitchSlider.value);
-        pitchValue.textContent = `${rate.toFixed(2)}x`;
-        if(currentSource) currentSource.playbackRate.value = rate;
-    });
     lowpassSlider.addEventListener('input', () => updateFilterLabel(lowpassValue, linToLogFreq(lowpassSlider.value)));
     highpassSlider.addEventListener('input', () => updateFilterLabel(highpassValue, linToLogFreq(highpassSlider.value)));
+    filterAmountSlider.addEventListener('input', () => { filterAmountValue.textContent = `${filterAmountSlider.value}%`; });
 
     // Buttons
     orderDegradeFirstBtn.addEventListener('click', () => setEffectOrder('degrade_first'));
@@ -730,6 +761,11 @@ function addEventListeners() {
     resampleBtn.addEventListener('click', resampleAudio);
     playOriginal.addEventListener('click', () => togglePlayback(originalBuffer, playOriginal, playheadOriginal));
     playProcessed.addEventListener('click', () => togglePlayback(processedBuffer, playProcessed, playheadProcessed));
+    
+    // UI Change Handlers
+    filterTypeSelect.addEventListener('change', updateFilterUI);
+    playbackTypeSelect.addEventListener('change', updatePlaybackUI);
+    playbackAmountSlider.addEventListener('input', updatePlaybackUI);
 
     // Presets
     savePresetBtn.addEventListener('click', savePreset);
@@ -801,20 +837,28 @@ async function processAudio() {
     
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const degradedBuffer = await applyAlgorithm(originalBuffer, algorithmSelect.value, intensitySlider.value / 100);
+    // 1. Apply destructive playback FX first
+    let bufferAfterPlaybackFX = await applyPlaybackFX(originalBuffer);
 
+    // 2. Apply degradation
+    let degradedBuffer = await applyAlgorithm(bufferAfterPlaybackFX, algorithmSelect.value, intensitySlider.value / 100);
+
+    // 3. Setup offline context for node-based processing
     const offlineCtx = new OfflineAudioContext(degradedBuffer.numberOfChannels, degradedBuffer.length, degradedBuffer.sampleRate);
     const sourceNode = offlineCtx.createBufferSource();
     sourceNode.buffer = degradedBuffer;
 
+    // 4. Create processing nodes
     const distortionNode = createDistortionNode(offlineCtx);
-    const highpassNode = createFilterNode(offlineCtx, 'highpass', linToLogFreq(highpassSlider.value));
-    const lowpassNode = createFilterNode(offlineCtx, 'lowpass', linToLogFreq(lowpassSlider.value));
+    const filterGraph = createFilterGraph(offlineCtx);
 
+    // 5. Connect nodes based on effect order
     if (effectOrder === 'degrade_first') {
-        sourceNode.connect(distortionNode).connect(highpassNode).connect(lowpassNode).connect(offlineCtx.destination);
+        sourceNode.connect(distortionNode).connect(filterGraph.input);
+        filterGraph.output.connect(offlineCtx.destination);
     } else {
-        sourceNode.connect(highpassNode).connect(lowpassNode).connect(distortionNode).connect(offlineCtx.destination);
+        sourceNode.connect(filterGraph.input);
+        filterGraph.output.connect(distortionNode).connect(offlineCtx.destination);
     }
     
     sourceNode.start(0);
@@ -867,21 +911,20 @@ function downloadAudio() {
 
 function savePreset() {
     const name = presetNameInput.value.trim();
-    if (!name) {
-        updateStatus('Please enter a preset name.', 'error');
-        return;
-    }
-    const settings = {
+    if (!name) { updateStatus('Please enter a preset name.', 'error'); return; }
+    presets[name] = {
         algorithm: algorithmSelect.value,
         intensity: intensitySlider.value,
         distortionType: distortionTypeSelect.value,
         distortionAmount: distortionAmountSlider.value,
-        lowpass: linToLogFreq(lowpassSlider.value),
-        highpass: linToLogFreq(highpassSlider.value),
-        pitch: pitchSlider.value,
+        filterType: filterTypeSelect.value,
+        lowpass: lowpassSlider.value,
+        highpass: highpassSlider.value,
+        filterAmount: filterAmountSlider.value,
+        playbackType: playbackTypeSelect.value,
+        playbackAmount: playbackAmountSlider.value,
         order: effectOrder,
     };
-    presets[name] = settings;
     localStorage.setItem('noiseForgePresets', JSON.stringify(presets));
     populatePresetList();
     presetList.value = name;
@@ -896,25 +939,26 @@ function loadPreset() {
         updateStatus('Controls reset to default.', 'success');
         return;
     }
-
     if (!name || !presets[name]) return;
-    const settings = presets[name];
+    const p = presets[name];
     
-    algorithmSelect.value = settings.algorithm;
-    intensitySlider.value = settings.intensity;
-    distortionTypeSelect.value = settings.distortionType;
-    distortionAmountSlider.value = settings.distortionAmount;
-    lowpassSlider.value = freqToLinValue(settings.lowpass);
-    highpassSlider.value = freqToLinValue(settings.highpass);
-    pitchSlider.value = settings.pitch;
-    setEffectOrder(settings.order);
+    algorithmSelect.value = p.algorithm;
+    intensitySlider.value = p.intensity;
+    distortionTypeSelect.value = p.distortionType;
+    distortionAmountSlider.value = p.distortionAmount;
+    filterTypeSelect.value = p.filterType;
+    lowpassSlider.value = p.lowpass;
+    highpassSlider.value = p.highpass;
+    filterAmountSlider.value = p.filterAmount;
+    playbackTypeSelect.value = p.playbackType;
+    playbackAmountSlider.value = p.playbackAmount;
+    setEffectOrder(p.order);
 
-    // Update all UI labels from the new slider values
-    intensityValue.textContent = `${intensitySlider.value}%`;
-    distortionValue.textContent = `${distortionAmountSlider.value}%`;
-    updateFilterLabel(lowpassValue, settings.lowpass);
-    updateFilterLabel(highpassValue, settings.highpass);
-    pitchValue.textContent = `${parseFloat(pitchSlider.value).toFixed(2)}x`;
+    // Update all UI labels and states from the new values
+    intensityValue.textContent = `${p.intensity}%`;
+    distortionValue.textContent = `${p.distortionAmount}%`;
+    updateFilterUI();
+    updatePlaybackUI();
     
     updateStatus(`Preset '${name}' loaded.`, 'success');
 }
@@ -932,51 +976,48 @@ function deletePreset() {
 
 function loadPresetsFromStorage() {
     const storedPresets = localStorage.getItem('noiseForgePresets');
-    if (storedPresets) {
-        presets = JSON.parse(storedPresets);
-    }
+    if (storedPresets) presets = JSON.parse(storedPresets);
     populatePresetList();
 }
 
 function populatePresetList() {
     const currentVal = presetList.value;
     presetList.innerHTML = '<option value="__init__">-- Initial State --</option>';
-    for (const name in presets) {
+    Object.keys(presets).sort().forEach(name => {
         const option = document.createElement('option');
         option.value = name;
         option.textContent = name;
         presetList.appendChild(option);
-    }
-    presetList.value = currentVal; // try to restore previous selection
-    deletePresetBtn.disabled = presetList.value === "" || presetList.value === "__init__";
+    });
+    presetList.value = currentVal;
+    deletePresetBtn.disabled = !presetList.value || presetList.value === "__init__";
 }
 
 function resetAllControls() {
-    algorithmSelect.value = "am";
+    algorithmSelect.selectedIndex = 0;
     intensitySlider.value = 50;
-    distortionTypeSelect.value = "none";
+    distortionTypeSelect.selectedIndex = 0;
     distortionAmountSlider.value = 0;
+    filterTypeSelect.selectedIndex = 0;
     lowpassSlider.value = 1000;
     highpassSlider.value = 0;
-    pitchSlider.value = 1.0;
+    filterAmountSlider.value = 50;
+    playbackTypeSelect.selectedIndex = 0;
+    playbackAmountSlider.value = 50; // Corresponds to 1.0x rate
     setEffectOrder('degrade_first');
 
     intensityValue.textContent = "50%";
     distortionValue.textContent = "0%";
-    updateFilterLabel(lowpassValue, maxFilterFreq);
-    updateFilterLabel(highpassValue, minFilterFreq);
-    pitchValue.textContent = "1.00x";
+    updateFilterUI();
+    updatePlaybackUI();
 }
 
 // === PLAYBACK & SCRUBBING ===
 
 function togglePlayback(buffer, button, playhead) {
     if (!buffer) return;
-    if (button.classList.contains('playing')) {
-        stopAudio();
-    } else {
-        playAudio(buffer, button, playhead, startOffset);
-    }
+    if (button.classList.contains('playing')) stopAudio();
+    else playAudio(buffer, button, playhead, startOffset);
 }
 
 function playAudio(buffer, button, playhead, offset = 0) {
@@ -984,7 +1025,12 @@ function playAudio(buffer, button, playhead, offset = 0) {
 
   currentSource = audioContext.createBufferSource();
   currentSource.buffer = buffer;
-  currentSource.playbackRate.value = parseFloat(pitchSlider.value);
+  
+  if (playbackTypeSelect.value === 'tape') {
+    const rate = 0.5 + (playbackAmountSlider.value / 100) * 1.5;
+    currentSource.playbackRate.value = rate;
+  }
+  
   currentSource.connect(audioContext.destination);
   
   startOffset = offset;
@@ -998,9 +1044,7 @@ function playAudio(buffer, button, playhead, offset = 0) {
   
   updatePlayheadPosition();
   
-  currentSource.onended = () => {
-    if (currentPlayButton === button) stopAudio(true);
-  };
+  currentSource.onended = () => { if (currentPlayButton === button) stopAudio(true); };
 }
 
 function stopAudio(finished = false) {
@@ -1013,27 +1057,21 @@ function stopAudio(finished = false) {
   
   if (animationId) cancelAnimationFrame(animationId);
   animationId = null;
-  
   if (currentPlayButton) currentPlayButton.classList.remove('playing');
-  
   if (currentPlayhead) {
     if (finished) currentPlayhead.style.left = '0%';
     currentPlayhead.classList.remove('active');
   }
-
   currentPlayhead = null;
   currentPlayButton = null;
 }
 
 function updatePlayheadPosition() {
     if (!currentSource) return;
-
     const rate = currentSource.playbackRate.value;
     const effectiveDuration = currentSource.buffer.duration / rate;
     const elapsed = audioContext.currentTime - playbackStartTime;
-    
-    if (elapsed >= effectiveDuration) return; // onended will handle stopping
-    
+    if (elapsed >= effectiveDuration) return;
     if(currentPlayhead) {
         const progress = (elapsed * rate) / currentSource.buffer.duration;
         currentPlayhead.style.left = `${progress * 100}%`;
@@ -1046,18 +1084,14 @@ function handleScrub(event, buffer, button, playhead) {
     const rect = event.currentTarget.getBoundingClientRect();
     const wasPlaying = button.classList.contains('playing');
 
-    function calculateAndSeek(e) {
+    const calculateAndSeek = (e) => {
         const x = e.clientX - rect.left;
         const percentage = Math.max(0, Math.min(1, x / rect.width));
         startOffset = buffer.duration * percentage;
         playhead.style.left = `${percentage * 100}%`;
-        if (wasPlaying) {
-            playAudio(buffer, button, playhead, startOffset);
-        }
-    }
-    
+        if (wasPlaying) playAudio(buffer, button, playhead, startOffset);
+    };
     calculateAndSeek(event);
-
     const mouseMoveHandler = (e) => calculateAndSeek(e);
     const mouseUpHandler = () => {
         window.removeEventListener('mousemove', mouseMoveHandler);
@@ -1069,96 +1103,182 @@ function handleScrub(event, buffer, button, playhead) {
 
 // === UI & DRAWING & HELPERS ===
 
-function updateStatus(message, type = '') {
-  status.textContent = message;
-  status.className = `status ${type}`;
+function updateFilterUI() {
+    const isClassic = filterTypeSelect.value === 'classic';
+    classicFilterControls.style.display = isClassic ? 'block' : 'none';
+    weirdFilterControls.style.display = isClassic ? 'none' : 'block';
+    updateFilterLabel(lowpassValue, linToLogFreq(lowpassSlider.value));
+    updateFilterLabel(highpassValue, linToLogFreq(highpassSlider.value));
+    filterAmountValue.textContent = `${filterAmountSlider.value}%`;
 }
 
-function updateFilterLabel(labelElement, freq) {
-    labelElement.textContent = freq < 1000 ? `${Math.round(freq)}Hz` : `${(freq/1000).toFixed(1)}kHz`;
+function updatePlaybackUI() {
+    const type = playbackTypeSelect.value;
+    const amount = playbackAmountSlider.value / 100.0;
+    let labelText = '';
+    let valueText = '';
+    
+    switch(type) {
+        case 'tape':
+            const rate = 0.5 + amount * 1.5;
+            labelText = 'Rate';
+            valueText = `${rate.toFixed(2)}x`;
+            if (currentSource) currentSource.playbackRate.value = rate;
+            break;
+        case 'granular':
+            labelText = 'Grain Position';
+            valueText = `${Math.round(amount * 100)}%`;
+            break;
+        case 'reverse_stutter':
+            labelText = 'Chunk Size';
+            valueText = `${Math.round(amount * 100)}%`;
+            break;
+    }
+    playbackAmountLabel.textContent = labelText;
+    playbackAmountValue.textContent = valueText;
 }
 
-function linToLogFreq(value) {
-    const pos = value / 1000.0;
-    return minFilterFreq * Math.pow(maxFilterFreq / minFilterFreq, pos);
-}
-
-function freqToLinValue(freq) {
-    const pos = Math.log(freq / minFilterFreq) / Math.log(maxFilterFreq / minFilterFreq);
-    return Math.round(pos * 1000);
-}
+function updateStatus(message, type = '') { status.textContent = message; status.className = `status ${type}`; }
+function updateFilterLabel(el, freq) { el.textContent = freq < 1000 ? `${Math.round(freq)}Hz` : `${(freq/1000).toFixed(1)}kHz`; }
+function linToLogFreq(v) { return minFilterFreq * Math.pow(maxFilterFreq / minFilterFreq, v / 1000.0); }
+function freqToLinValue(f) { return Math.round((Math.log(f / minFilterFreq) / Math.log(maxFilterFreq / minFilterFreq)) * 1000); }
 
 function drawWaveform(canvas, buffer) {
-  const ctx = canvas.getContext('2d');
-  const width = canvas.parentElement.offsetWidth;
-  const height = canvas.parentElement.offsetHeight;
+  const ctx = canvas.getContext('2d'), W = canvas.parentElement.offsetWidth, H = canvas.parentElement.offsetHeight;
   const data = buffer.getChannelData(0);
-  
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#111';
-  ctx.fillRect(0, 0, width, height);
-  
-  ctx.strokeStyle = '#007bff';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  
-  const step = Math.ceil(data.length / width);
-  const amp = height / 2;
-  
-  for (let i = 0; i < width; i++) {
-    let min = 1.0, max = -1.0;
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#111'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#007bff'; ctx.lineWidth = 1.5; ctx.beginPath();
+  const step = Math.ceil(data.length / W), amp = H / 2;
+  for (let i = 0; i < W; i++) {
+    let min = 1, max = -1;
     for (let j = 0; j < step; j++) {
-      const datum = data[(i * step) + j];
-      if (datum !== undefined) {
-        if (datum < min) min = datum;
-        if (datum > max) max = datum;
-      }
+      const d = data[(i * step) + j];
+      if (d !== undefined) { if (d < min) min = d; if (d > max) max = d; }
     }
-    ctx.moveTo(i, (1 + min) * amp);
-    ctx.lineTo(i, (1 + max) * amp);
+    ctx.moveTo(i, (1 + min) * amp); ctx.lineTo(i, (1 + max) * amp);
   }
   ctx.stroke();
-  
-  ctx.strokeStyle = '#2c2c2c';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, height / 2);
-  ctx.lineTo(width, height / 2);
-  ctx.stroke();
+  ctx.strokeStyle = '#2c2c2c'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
 }
 
 function clearCanvas(canvas) {
-  const ctx = canvas.getContext('2d');
-  const width = canvas.parentElement.offsetWidth;
-  const height = canvas.parentElement.offsetHeight;
-  ctx.fillStyle = '#111';
-  ctx.fillRect(0, 0, width, height);
+  const ctx = canvas.getContext('2d'), W = canvas.parentElement.offsetWidth, H = canvas.parentElement.offsetHeight;
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, W, H);
 }
 
 // === ALGORITHMS & PROCESSING NODES ===
 
-function createFilterNode(context, type, frequency) {
-    const filter = context.createBiquadFilter();
-    filter.type = type;
-    filter.frequency.value = frequency;
-    filter.Q.value = 0.7071;
-    return filter;
+function createFilterGraph(context) {
+    const type = filterTypeSelect.value;
+    const input = context.createGain();
+    const output = context.createGain();
+
+    if (type === 'classic') {
+        const highpass = context.createBiquadFilter();
+        highpass.type = 'highpass';
+        highpass.frequency.value = linToLogFreq(highpassSlider.value);
+        highpass.Q.value = 0.7071;
+        const lowpass = context.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency.value = linToLogFreq(lowpassSlider.value);
+        lowpass.Q.value = 0.7071;
+        input.connect(highpass).connect(lowpass).connect(output);
+    } else if (type === 'comb') {
+        const amount = filterAmountSlider.value / 100.0;
+        const delayTime = 0.001 + amount * 0.05; // 1ms to 50ms
+        const feedback = 0.1 + amount * 0.85;
+        const delay = context.createDelay(0.1);
+        delay.delayTime.value = delayTime;
+        const feedbackGain = context.createGain();
+        feedbackGain.gain.value = feedback;
+        input.connect(delay);
+        delay.connect(feedbackGain);
+        feedbackGain.connect(delay);
+        input.connect(output); // Dry signal
+        delay.connect(output); // Wet signal
+    } else if (type === 'vowel') {
+        // Simple vowel morph A-E-I-O-U
+        const amount = filterAmountSlider.value / 100.0;
+        const formants = [
+            { f: [660, 1720, 2410], q: [6, 8, 12] }, // A
+            { f: [520, 1840, 2480], q: [5, 9, 12] }, // E
+            { f: [270, 2290, 3010], q: [4, 10, 15] },// I
+            { f: [450, 870, 2410], q: [5, 7, 12] },  // O
+            { f: [300, 870, 2240], q: [4, 7, 12] },  // U
+        ];
+        const numVowels = formants.length;
+        const pos = amount * (numVowels - 1);
+        const idx1 = Math.floor(pos);
+        const idx2 = Math.min(numVowels - 1, idx1 + 1);
+        const frac = pos - idx1;
+
+        for (let i = 0; i < 3; i++) {
+            const f1 = formants[idx1].f[i], q1 = formants[idx1].q[i];
+            const f2 = formants[idx2].f[i], q2 = formants[idx2].q[i];
+            const freq = f1 + (f2 - f1) * frac;
+            const q = q1 + (q2 - q1) * frac;
+
+            const bandpass = context.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.value = freq;
+            bandpass.Q.value = q;
+            input.connect(bandpass).connect(output);
+        }
+    }
+    return { input, output };
 }
 
 function createDistortionNode(context) {
     const type = distortionTypeSelect.value, amount = distortionAmountSlider.value / 100;
     if (type === 'none' || amount === 0) return context.createGain();
-    const distortion = context.createWaveShaper(), curve = new Float32Array(4096), k = amount * 100;
+    const dist = context.createWaveShaper(), curve = new Float32Array(4096);
     switch (type) {
-        case 'foldback': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, th = 1 - (amount * 0.9); curve[i] = Math.max(-1, Math.min(1, x - (Math.max(0, x - th) * 2) + (Math.min(0, x + th) * 2))); } break;
-        case 'sine': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; curve[i] = Math.sin(x * (1 + k * 0.1) * Math.PI / 2); } break;
-        case 'glitch': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, th = 1 - amount; curve[i] = x > th ? 1 : (x < -th ? -1 : 0); } break;
-        case 'overdrive': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; curve[i] = ((1 + k/25) * x) / (1 + (k/25) * Math.abs(x)); } break;
-        case 'fuzz': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, y = x * (k + 1); curve[i] = (y > 0 ? 1 : -1) * (1 - Math.exp(-Math.abs(y))); } break;
+        case 'overdrive': { const k = amount*100; for(let i=0;i<4096;i++){const x=i*2/4096-1;curve[i]=((1+k/25)*x)/(1+(k/25)*Math.abs(x))}}break;
+        case 'fuzz': { const k=amount*100; for(let i=0;i<4096;i++){const x=i*2/4096-1,y=x*(k+1);curve[i]=(y>0?1:-1)*(1-Math.exp(-Math.abs(y)))}}break;
+        case 'foldback': for(let i=0;i<4096;i++){const x=i*2/4096-1,th=1-(amount*.9);curve[i]=Math.max(-1,Math.min(1,x-(Math.max(0,x-th)*2)+(Math.min(0,x+th)*2)))}break;
+        case 'sine':{const k=amount*10;for(let i=0;i<4096;i++){const x=i*2/4096-1;curve[i]=Math.sin(x*(1+k)*Math.PI/2)}}break;
+        case 'bitwise': {const mask=Math.floor(amount*255);for(let i=0;i<4096;i++){const x=i*2/4096-1,y=Math.floor((x+1)*127.5);curve[i]=((y^mask)/127.5)-1}}break;
+        case 'chaos': { const r=3.57+(amount*0.429); let y=.5; for(let i=0;i<4096;i++){y=r*y*(1-y);curve[i]=(y-0.5)*2}}break;
     }
-    distortion.curve = curve;
-    distortion.oversample = '4x';
-    return distortion;
+    dist.curve = curve;
+    dist.oversample = '4x';
+    return dist;
+}
+
+async function applyPlaybackFX(buffer) {
+    const type = playbackTypeSelect.value;
+    const amount = playbackAmountSlider.value / 100.0;
+    if (type === 'tape') return buffer; // Tape is live, not destructive
+
+    const newBuffer = audioContext.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+    for(let ch=0; ch < buffer.numberOfChannels; ch++) {
+        const input = buffer.getChannelData(ch);
+        const output = newBuffer.getChannelData(ch);
+        switch (type) {
+            case 'granular': {
+                const grainPos = Math.floor(amount * (input.length - 1));
+                const grainSize = Math.floor(0.01 * buffer.sampleRate); // 10ms grain
+                for(let i=0; i < output.length; i++) {
+                    const idx = (grainPos + (i % grainSize)) % input.length;
+                    output[i] = input[idx];
+                }
+                break;
+            }
+            case 'reverse_stutter': {
+                const chunkSize = Math.floor((0.01 + amount * 0.5) * buffer.sampleRate);
+                for(let i=0; i < output.length; i += chunkSize) {
+                    for(let j=0; j < chunkSize; j++) {
+                        if (i + j < output.length) {
+                            const readIdx = i + (chunkSize - 1 - j);
+                            output[i + j] = readIdx < input.length ? input[readIdx] : 0;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+    return newBuffer;
 }
 
 async function applyAlgorithm(buffer, algo, intensity) {
