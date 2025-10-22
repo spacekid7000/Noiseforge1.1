@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noise Forge - Lo-Fi Degradation Playground</title>
+<style>
+:root {
+  --bg-color: #121212;
+  --surface-color: #1e1e1e;
+  --primary-text-color: #e0e0e0;
+  --secondary-text-color: #a0a0a0;
+  --border-color: #2c2c2c;
+  --accent-color: #007bff;
+  --interactive-bg: #2a2a2a;
+  --interactive-hover: #383838;
+  --border-radius: 6px;
+  --transition-speed: 0.2s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--primary-text-color);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-top: 0.25rem;
+  color: var(--secondary-text-color);
+}
+
+main {
+  display: flex;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.main-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--secondary-text-color);
+}
+
+/* Upload Area */
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.file-input-label {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem;
+  background-color: #252525;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.file-input-label:hover {
+  border-color: var(--accent-color);
+  background-color: #2a2a2a;
+}
+
+.file-label-title {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.file-name {
+  font-size: 0.85em;
+  color: var(--secondary-text-color);
+  margin-top: 0.5rem;
+}
+
+/* Controls */
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.control-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--secondary-text-color);
+}
+
+select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border-color);
+  background-color: #252525;
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--primary-text-color);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+  cursor: pointer;
+  transition: border-color var(--transition-speed) ease;
+}
+
+select:hover {
+  border-color: var(--secondary-text-color);
+}
+
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--primary-text-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #fff;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--primary-text-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition-speed);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #fff;
+}
+
+.slider-label {
+  font-size: 0.9em;
+  color: var(--primary-text-color);
+  min-width: 45px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn {
+  background: var(--interactive-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.7rem 1.25rem;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.9em;
+  color: var(--primary-text-color);
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  flex-grow: 1;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--interactive-hover);
+  border-color: #555;
+}
+
+.btn.btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+.btn.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Waveform */
+.waveform-container {
+  margin-bottom: 1.5rem;
+}
+
+.waveform-container:last-child {
+  margin-bottom: 0;
+}
+
+.waveform-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.waveform-header h3 {
+  font-weight: 500;
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.play-button {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--secondary-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-speed) ease;
+  position: relative;
+}
+
+.play-button::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent var(--secondary-text-color);
+  transform: translateX(1px);
+  transition: all var(--transition-speed) ease;
+}
+
+.play-button.playing::after {
+  border-style: double;
+  border-width: 0 0 0 10px;
+  height: 12px;
+  transform: translateX(0);
+  border-color: transparent transparent transparent var(--secondary-text-color);
+}
+
+.play-button:hover:not(:disabled) {
+  border-color: var(--accent-color);
+}
+
+.play-button:hover:not(:disabled)::after {
+  border-color: transparent transparent transparent var(--accent-color);
+}
+
+.play-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.canvas-wrapper {
+  position: relative;
+  background-color: #111;
+  border: 1px solid #000;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  height: 150px;
+  display: block;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background-color: var(--accent-color);
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+}
+
+.playhead.active {
+  display: block;
+}
+
+/* Status */
+.status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #252525;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  font-size: 0.85em;
+  color: var(--secondary-text-color);
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status.error {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.status.success {
+  color: #51cf66;
+  border-color: #51cf66;
+}
+
+@media (max-width: 900px) {
+  main {
+    flex-direction: column;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  body {
+    padding: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>NOISE FORGE</h1>
+    <p class="subtitle">Lo-Fi Degradation Playground</p>
+  </header>
+  
+  <main>
+    <div class="main-col">
+      <div class="card">
+        <div class="card-header">
+          <h2>Input</h2>
+        </div>
+        <div class="card-content">
+          <div class="upload-area">
+            <input type="file" id="fileInput" accept="audio/*">
+            <label for="fileInput" class="file-input-label">
+              <span class="file-label-title">📁 Upload Audio</span>
+              <span class="file-name" id="fileName">WAV or MP3</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2>Controls</h2>
+        </div>
+        <div class="card-content">
+          <div class="control-group">
+            <label for="algorithm">Algorithm</label>
+            <select id="algorithm">
+              <option value="am">AM Modulator</option>
+              <option value="fm">FM Drifter</option>
+              <option value="spec">Spectrogram Crush</option>
+              <option value="midi">MIDI Morph</option>
+              <option value="base64">Base64 Bloat</option>
+              <option value="json">JSON Jam</option>
+              <option value="ascii">ASCII Wave</option>
+              <option value="qr">QR Code Squeeze</option>
+              <option value="svg">SVG Etch</option>
+              <option value="hex">Hex to Font</option>
+              <option value="csv">CSV Scatter</option>
+              <option value="emoji">Emoji Pulse</option>
+              <!-- NEW ALGORITHMS ADDED HERE -->
+              <option value="pcm">Raw PCM (Bitcrush)</option>
+              <option value="mp3">MP3 Crush (Simulated)</option>
+              <option value="ogg">OGG Crunch (Simulated)</option>
+              <option value="aiff">AIFF Endian Swap (Simulated)</option>
+              <option value="aac">AAC Fizz (Simulated)</option>
+              <option value="mod">MOD Resampler</option>
+              <option value="sysex">SYSEX Warp</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="intensity">Intensity</label>
+            <div class="slider-wrapper">
+              <input type="range" id="intensity" min="0" max="100" value="50">
+              <span class="slider-label" id="intensityValue">50%</span>
+            </div>
+          </div>
+          
+          <div class="action-buttons">
+            <button id="processBtn" class="btn btn-primary" disabled>Process</button>
+            <button id="downloadBtn" class="btn" disabled>Download</button>
+          </div>
+          
+          <div class="status" id="status">Ready</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="main-col">
+      <div class="card">
+        <div class="card-header">
+          <h2>Waveforms</h2>
+        </div>
+        <div class="card-content">
+          <div class="waveform-container">
+            <div class="waveform-header">
+              <h3>Original</h3>
+              <button class="play-button" id="playOriginal" disabled></button>
+            </div>
+            <div class="canvas-wrapper">
+              <canvas id="originalWaveform"></canvas>
+              <div class="playhead" id="playheadOriginal"></div>
+            </div>
+          </div>
+          
+          <div class="waveform-container">
+            <div class="waveform-header">
+              <h3>Processed</h3>
+              <button class="play-button" id="playProcessed" disabled></button>
+            </div>
+            <div class="canvas-wrapper">
+              <canvas id="processedWaveform"></canvas>
+              <div class="playhead" id="playheadProcessed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const fileName = document.getElementById('fileName');
+const algorithmSelect = document.getElementById('algorithm');
+const intensitySlider = document.getElementById('intensity');
+const intensityValue = document.getElementById('intensityValue');
+const processBtn = document.getElementById('processBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const status = document.getElementById('status');
+const originalCanvas = document.getElementById('originalWaveform');
+const processedCanvas = document.getElementById('processedWaveform');
+const playOriginal = document.getElementById('playOriginal');
+const playProcessed = document.getElementById('playProcessed');
+const playheadOriginal = document.getElementById('playheadOriginal');
+const playheadProcessed = document.getElementById('playheadProcessed');
+
+let audioContext;
+let originalBuffer;
+let processedBuffer;
+let currentSource = null;
+let currentPlayhead = null;
+let animationId = null;
+
+// Initialize
+function init() {
+  resizeCanvases();
+  window.addEventListener('resize', resizeCanvases);
+}
+
+function resizeCanvases() {
+  const canvases = [originalCanvas, processedCanvas];
+  canvases.forEach(canvas => {
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  });
+  
+  if (originalBuffer) drawWaveform(originalCanvas, originalBuffer);
+  if (processedBuffer) drawWaveform(processedCanvas, processedBuffer);
+}
+
+// Update intensity display
+intensitySlider.addEventListener('input', () => {
+  intensityValue.textContent = intensitySlider.value + '%';
+});
+
+// File upload
+fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  fileName.textContent = file.name;
+  
+  try {
+    updateStatus('Loading audio...', '');
+    
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    const arrayBuffer = await file.arrayBuffer();
+    originalBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    processedBuffer = null;
+    
+    drawWaveform(originalCanvas, originalBuffer);
+    clearCanvas(processedCanvas);
+    
+    processBtn.disabled = false;
+    downloadBtn.disabled = true;
+    playOriginal.disabled = false;
+    playProcessed.disabled = true;
+    
+    updateStatus('Audio loaded successfully', 'success');
+  } catch (err) {
+    updateStatus('Error loading audio: ' + err.message, 'error');
+  }
+});
+
+// Draw waveform
+function drawWaveform(canvas, buffer) {
+  const ctx = canvas.getContext('2d');
+  const width = canvas.offsetWidth;
+  const height = canvas.offsetHeight;
+  const data = buffer.getChannelData(0);
+  
+  ctx.clearRect(0, 0, width, height);
+  
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, width, height);
+  
+  ctx.strokeStyle = '#007bff';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  
+  const step = Math.ceil(data.length / width);
+  const amp = height / 2;
+  
+  for (let i = 0; i < width; i++) {
+    let min = 1.0;
+    let max = -1.0;
+    
+    for (let j = 0; j < step; j++) {
+      const datum = data[(i * step) + j];
+      if (datum !== undefined) {
+        if (datum < min) min = datum;
+        if (datum > max) max = datum;
+      }
+    }
+    
+    const y1 = (1 + min) * amp;
+    const y2 = (1 + max) * amp;
+    
+    if (i === 0) {
+      ctx.moveTo(i, y1);
+    }
+    ctx.lineTo(i, y1);
+    ctx.lineTo(i, y2);
+  }
+  
+  ctx.stroke();
+  
+  // Center line
+  ctx.strokeStyle = '#2c2c2c';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, height / 2);
+  ctx.lineTo(width, height / 2);
+  ctx.stroke();
+}
+
+function clearCanvas(canvas) {
+  const ctx = canvas.getContext('2d');
+  const width = canvas.offsetWidth;
+  const height = canvas.offsetHeight;
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, width, height);
+}
+
+// Process button
+processBtn.addEventListener('click', async () => {
+  if (!originalBuffer) return;
+  
+  const algo = algorithmSelect.value;
+  const intensity = intensitySlider.value / 100;
+  
+  try {
+    updateStatus('Processing...', '');
+    processBtn.disabled = true;
+    
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    processedBuffer = await applyAlgorithm(originalBuffer, algo, intensity);
+    drawWaveform(processedCanvas, processedBuffer);
+    
+    downloadBtn.disabled = false;
+    playProcessed.disabled = false;
+    
+    updateStatus('Processing complete', 'success');
+  } catch (err) {
+    updateStatus('Error: ' + err.message, 'error');
+  } finally {
+    processBtn.disabled = false;
+  }
+});
+
+// Download button
+downloadBtn.addEventListener('click', () => {
+  if (!processedBuffer) return;
+  
+  const wav = bufferToWav(processedBuffer);
+  const blob = new Blob([wav], { type: 'audio/wav' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `noiseforge_${algorithmSelect.value}_${Date.now()}.wav`;
+  a.click();
+  
+  URL.revokeObjectURL(url);
+  updateStatus('Download started', 'success');
+});
+
+// Play buttons
+playOriginal.addEventListener('click', () => {
+  if (originalBuffer) playAudio(originalBuffer, playOriginal, playheadOriginal);
+});
+
+playProcessed.addEventListener('click', () => {
+  if (processedBuffer) playAudio(processedBuffer, playProcessed, playheadProcessed);
+});
+
+function playAudio(buffer, button, playhead) {
+  if (currentSource) {
+    stopAudio();
+  }
+  
+  if (button.classList.contains('playing')) {
+    stopAudio();
+    return;
+  }
+  
+  currentSource = audioContext.createBufferSource();
+  currentSource.buffer = buffer;
+  currentSource.connect(audioContext.destination);
+  
+  const startTime = audioContext.currentTime;
+  currentSource.start(0);
+  
+  button.classList.add('playing');
+  playhead.classList.add('active');
+  currentPlayhead = playhead;
+  
+  function updatePlayhead() {
+    const elapsed = audioContext.currentTime - startTime;
+    const progress = (elapsed / buffer.duration) * 100;
+    
+    if (progress >= 100) {
+      stopAudio();
+      return;
+    }
+    
+    playhead.style.left = progress + '%';
+    animationId = requestAnimationFrame(updatePlayhead);
+  }
+  
+  updatePlayhead();
+  
+  currentSource.onended = () => {
+    stopAudio();
+  };
+}
+
+function stopAudio() {
+  if (currentSource) {
+    try {
+      currentSource.stop();
+    } catch (e) {}
+    currentSource = null;
+  }
+  
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+  
+  document.querySelectorAll('.play-button').forEach(btn => {
+    btn.classList.remove('playing');
+  });
+  
+  if (currentPlayhead) {
+    currentPlayhead.classList.remove('active');
+    currentPlayhead.style.left = '0';
+    currentPlayhead = null;
+  }
+}
+
+function updateStatus(message, type) {
+  status.textContent = message;
+  status.className = 'status ' + type;
+}
+
+// Algorithm implementations
+async function applyAlgorithm(buffer, algo, intensity) {
+  const newBuffer = audioContext.createBuffer(
+    buffer.numberOfChannels,
+    buffer.length,
+    buffer.sampleRate
+  );
+  
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    const input = buffer.getChannelData(ch);
+    const output = newBuffer.getChannelData(ch);
+    
+    switch (algo) {
+      case 'am': amModulator(input, output, intensity); break;
+      case 'fm': fmDrifter(input, output, intensity); break;
+      case 'spec': spectrogramCrush(input, output, intensity); break;
+      case 'midi': midiMorph(input, output, intensity); break;
+      case 'base64': base64Bloat(input, output, intensity); break;
+      case 'json': jsonJam(input, output, intensity); break;
+      case 'ascii': asciiWave(input, output, intensity); break;
+      case 'qr': qrCodeSqueeze(input, output, intensity); break;
+      case 'svg': svgEtch(input, output, intensity); break;
+      case 'hex': hexToFont(input, output, intensity); break;
+      case 'csv': csvScatter(input, output, intensity); break;
+      case 'emoji': emojiPulse(input, output, intensity); break;
+      // NEW ALGORITHM CASES ADDED HERE
+      case 'pcm': rawPcmBitcrush(input, output, intensity); break;
+      case 'mp3': mp3Crush(input, output, intensity); break;
+      case 'ogg': oggCrunch(input, output, intensity, buffer.sampleRate); break;
+      case 'aiff': aiffEndianSwap(input, output, intensity); break;
+      case 'aac': aacFizz(input, output, intensity); break;
+      case 'mod': modResampler(input, output, intensity); break;
+      case 'sysex': sysexWarp(input, output, intensity); break;
+    }
+  }
+  
+  return newBuffer;
+}
+
+function amModulator(input, output, intensity) {
+  const modFreq = 50 + intensity * 500;
+  for (let i = 0; i < input.length; i++) {
+    const mod = Math.sin(i / modFreq) * (1 + intensity * 2);
+    const noise = (Math.random() - 0.5) * intensity * 0.5;
+    output[i] = Math.tanh(input[i] * mod + noise);
+  }
+}
+
+function fmDrifter(input, output, intensity) {
+  let phase = 0;
+  const drift = intensity * 0.01;
+  for (let i = 0; i < input.length; i++) {
+    phase += input[i] * drift + Math.random() * intensity * 0.001;
+    output[i] = Math.sin(phase) * 0.8;
+  }
+}
+
+function spectrogramCrush(input, output, intensity) {
+  const blockSize = Math.floor(32 + intensity * 200);
+  for (let i = 0; i < input.length; i += blockSize) {
+    let avg = 0;
+    for (let j = 0; j < blockSize && i + j < input.length; j++) {
+      avg += input[i + j];
+    }
+    avg /= blockSize;
+    avg = Math.round(avg * (100 - intensity * 90)) / (100 - intensity * 90);
+    for (let j = 0; j < blockSize && i + j < input.length; j++) {
+      output[i + j] = avg + (Math.random() - 0.5) * intensity * 0.1;
+    }
+  }
+}
+
+function midiMorph(input, output, intensity) {
+  for (let i = 0; i < input.length; i++) {
+    const note = Math.round((input[i] + 1) * 63.5);
+    const quantized = (note + Math.floor(Math.random() * intensity * 12)) / 127 * 2 - 1;
+    output[i] = quantized;
+  }
+}
+
+function base64Bloat(input, output, intensity) {
+  const str = Array.from(input).map(v => String.fromCharCode(Math.floor((v + 1) * 127.5))).join('');
+  const b64 = btoa(str.slice(0, Math.floor(str.length / (1 + intensity))));
+  const decoded = atob(b64);
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * decoded.length);
+    output[i] = (decoded.charCodeAt(idx % decoded.length) / 127.5 - 1) * (1 - intensity * 0.3);
+  }
+}
+
+function jsonJam(input, output, intensity) {
+  const step = Math.max(1, Math.floor(intensity * 50));
+  const arr = [];
+  for (let i = 0; i < input.length; i += step) {
+    arr.push(parseFloat(input[i].toFixed(3 - Math.floor(intensity * 2))));
+  }
+  const json = JSON.stringify(arr);
+  const parsed = JSON.parse(json);
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * parsed.length);
+    output[i] = parsed[idx] || 0;
+  }
+}
+
+function asciiWave(input, output, intensity) {
+  const chars = ' .-:=+*#%@';
+  const ascii = [];
+  for (let i = 0; i < input.length; i += Math.max(1, Math.floor(10 - intensity * 9))) {
+    const idx = Math.floor((input[i] + 1) * 0.5 * (chars.length - 1));
+    ascii.push(chars[idx]);
+  }
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * ascii.length);
+    const charIdx = chars.indexOf(ascii[idx % ascii.length]);
+    output[i] = (charIdx / chars.length) * 2 - 1;
+  }
+}
+
+function qrCodeSqueeze(input, output, intensity) {
+  const bytes = new Uint8Array(Math.floor(input.length * (1 - intensity * 0.7)));
+  for (let i = 0; i < bytes.length; i++) {
+    const idx = Math.floor(i / bytes.length * input.length);
+    bytes[i] = Math.floor((input[idx] + 1) * 127.5);
+  }
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * bytes.length);
+    output[i] = (bytes[idx] / 127.5 - 1) + (Math.random() - 0.5) * intensity * 0.3;
+  }
+}
+
+function svgEtch(input, output, intensity) {
+  const points = Math.max(10, Math.floor(input.length / (10 + intensity * 1000)));
+  const simplified = [];
+  for (let i = 0; i < points; i++) {
+    const idx = Math.floor(i / points * input.length);
+    simplified.push(input[idx]);
+  }
+  for (let i = 0; i < output.length; i++) {
+    const t = i / output.length * (simplified.length - 1);
+    const idx = Math.floor(t);
+    const frac = t - idx;
+    const a = simplified[idx] || 0;
+    const b = simplified[Math.min(idx + 1, simplified.length - 1)] || 0;
+    output[i] = a + (b - a) * frac;
+  }
+}
+
+function hexToFont(input, output, intensity) {
+  const hex = Array.from(input).map(v => 
+    Math.floor((v + 1) * 127.5).toString(16).padStart(2, '0')
+  ).join('');
+  const compressed = hex.slice(0, Math.floor(hex.length * (1 - intensity * 0.6)));
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * compressed.length);
+    const code = parseInt(compressed.substr(idx % compressed.length, 2), 16) || 0;
+    output[i] = (code / 127.5 - 1) * (1 - intensity * 0.2);
+  }
+}
+
+function csvScatter(input, output, intensity) {
+  const rows = [];
+  const step = Math.max(1, Math.floor(1 + intensity * 20));
+  for (let i = 0; i < input.length; i += step) {
+    rows.push(input[i].toFixed(4 - Math.floor(intensity * 3)));
+  }
+  const csv = rows.join(',');
+  const parsed = csv.split(',').map(parseFloat);
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * parsed.length);
+    output[i] = parsed[idx] || 0;
+  }
+}
+
+function emojiPulse(input, output, intensity) {
+  const emojis = ['😴', '😐', '😊', '😃', '😄', '🤩', '🔥', '💥', '⚡'];
+  const emojiData = [];
+  for (let i = 0; i < input.length; i += Math.max(1, Math.floor(10 - intensity * 8))) {
+    const idx = Math.floor((input[i] + 1) * 0.5 * (emojis.length - 1));
+    emojiData.push(emojis[idx]);
+  }
+  const str = emojiData.join('');
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / output.length * str.length);
+    const charCode = str.charCodeAt(idx % str.length);
+    output[i] = ((charCode % 256) / 127.5 - 1) * (1 - intensity * 0.4);
+  }
+}
+
+// --- NEW ALGORITHM FUNCTIONS START HERE ---
+
+function rawPcmBitcrush(input, output, intensity) {
+  const bits = 16 - Math.floor(intensity * 15);
+  const steps = Math.pow(2, bits);
+  for (let i = 0; i < input.length; i++) {
+    const val = (input[i] + 1) / 2;
+    const quantized = Math.round(val * (steps - 1)) / (steps - 1);
+    output[i] = quantized * 2 - 1;
+  }
+}
+
+function mp3Crush(input, output, intensity) {
+  const crush = 12 - Math.floor(intensity * 10);
+  const steps = Math.pow(2, crush);
+  const windowSize = Math.floor(intensity * 20); // Simple moving average for low-pass
+  for (let i = 0; i < input.length; i++) {
+    let avg = 0;
+    for (let j = 0; j < windowSize; j++) {
+      avg += input[Math.max(0, i - j)] || 0;
+    }
+    avg /= windowSize;
+    const quantized = Math.round(avg * steps) / steps;
+    output[i] = quantized;
+  }
+}
+
+function oggCrunch(input, output, intensity, sampleRate) {
+  const lfoFreq = 0.1 + intensity * 8; // LFO cycles per second
+  const lfoPeriod = sampleRate / lfoFreq;
+  for (let i = 0; i < input.length; i++) {
+    const mod = (Math.sin(i / lfoPeriod * 2 * Math.PI) + 1) / 2; // 0 to 1
+    const currentIntensity = intensity * mod;
+    const bits = 16 - Math.floor(currentIntensity * 14);
+    const steps = Math.pow(2, bits);
+    output[i] = Math.round(input[i] * steps) / steps;
+  }
+}
+
+function aiffEndianSwap(input, output, intensity) {
+  const chunkSize = Math.max(2, Math.floor((1 - intensity) * 80 + 2));
+  for (let i = 0; i < input.length; i += chunkSize) {
+    for (let j = 0; j < chunkSize; j++) {
+      if (i + j < input.length) {
+        output[i + j] = input[i + (chunkSize - 1 - j)];
+      }
+    }
+  }
+}
+
+function aacFizz(input, output, intensity) {
+  const fizzChance = intensity * 0.05;
+  const fizzLength = Math.floor(intensity * 50);
+  for (let i = 0; i < input.length; i++) {
+    if (Math.random() < fizzChance) {
+      for (let j = 0; j < fizzLength && i + j < input.length; j++) {
+        output[i + j] = Math.random() * 2 - 1;
+      }
+      i += fizzLength -1;
+    } else {
+      output[i] = input[i];
+    }
+  }
+}
+
+function modResampler(input, output, intensity) {
+  const step = 1 + Math.floor(intensity * 80);
+  const downsampled = [];
+  for (let i = 0; i < input.length; i += step) {
+    downsampled.push(input[i]);
+  }
+  
+  // Bitcrush the downsampled audio
+  const bits = 8 - Math.floor(intensity * 6);
+  const steps = Math.pow(2, bits);
+  for (let i = 0; i < downsampled.length; i++) {
+    downsampled[i] = Math.round(downsampled[i] * steps) / steps;
+  }
+  
+  // Upsample (zero-order hold)
+  for (let i = 0; i < output.length; i++) {
+    const idx = Math.floor(i / step);
+    output[i] = downsampled[Math.min(idx, downsampled.length - 1)] || 0;
+  }
+}
+
+function sysexWarp(input, output, intensity) {
+  const midiValues = [];
+  const step = Math.max(1, Math.floor(10 - intensity * 9));
+  for (let i = 0; i < input.length; i += step) {
+    midiValues.push(Math.floor((input[i] + 1) * 63.5)); // 0-127
+  }
+  
+  const warpAmount = Math.floor(intensity * 50);
+  const warped = midiValues.map(v => (v + (Math.random() - 0.5) * warpAmount) % 128);
+  
+  for (let i = 0; i < output.length; i++) {
+    const t = i / output.length * (warped.length - 1);
+    const idx = Math.floor(t);
+    const frac = t - idx;
+    const a = warped[idx] || 0;
+    const b = warped[Math.min(idx + 1, warped.length - 1)] || 0;
+    const interpolated = a + (b - a) * frac;
+    output[i] = (interpolated / 63.5) - 1;
+  }
+}
+
+
+// Convert buffer to WAV
+function bufferToWav(buffer) {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const format = 1;
+  const bitDepth = 16;
+  
+  const bytesPerSample = bitDepth / 8;
+  const blockAlign = numChannels * bytesPerSample;
+  
+  const data = [];
+  for (let i = 0; i < buffer.length; i++) {
+    for (let ch = 0; ch < numChannels; ch++) {
+      let sample = buffer.getChannelData(ch)[i];
+      sample = Math.max(-1, Math.min(1, sample));
+      sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+      data.push(sample);
+    }
+  }
+  
+  const dataLength = data.length * bytesPerSample;
+  const bufferLength = 44 + dataLength;
+  const arrayBuffer = new ArrayBuffer(bufferLength);
+  const view = new DataView(arrayBuffer);
+  
+  const writeString = (offset, string) => {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  };
+  
+  writeString(0, 'RIFF');
+  view.setUint32(4, bufferLength - 8, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, format, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitDepth, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataLength, true);
+  
+  let offset = 44;
+  for (let i = 0; i < data.length; i++) {
+    view.setInt16(offset, data[i], true);
+    offset += 2;
+  }
+  
+  return arrayBuffer;
+}
+
+// Initialize on load
+init();
+</script>
+</body>
+</html>
