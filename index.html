@@ -28,7 +28,7 @@ body {
   background-color: var(--bg-color);
   color: var(--primary-text-color);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  padding: 2rem;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -37,7 +37,7 @@ body {
 
 .container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1500px;
 }
 
 header {
@@ -134,6 +134,7 @@ main {
   font-size: 0.85em;
   color: var(--secondary-text-color);
   margin-top: 0.5rem;
+  word-break: break-all;
 }
 
 /* Controls */
@@ -153,7 +154,7 @@ main {
   color: var(--secondary-text-color);
 }
 
-select {
+select, input[type="text"] {
   width: 100%;
   padding: 0.7rem 1rem;
   border: 1px solid var(--border-color);
@@ -162,13 +163,20 @@ select {
   font-family: inherit;
   font-size: 0.9rem;
   color: var(--primary-text-color);
+  transition: border-color var(--transition-speed) ease;
+}
+
+input[type="text"] {
+    margin-bottom: 0.5rem;
+}
+
+select {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1em;
   cursor: pointer;
-  transition: border-color var(--transition-speed) ease;
 }
 
 select:hover {
@@ -235,9 +243,8 @@ input[type="range"]::-moz-range-thumb:hover {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: auto; /* Pushes buttons to the bottom */
+  margin-top: auto;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
 }
 
 .btn {
@@ -528,35 +535,35 @@ canvas {
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header">
+            <h2>Weird Circuit (Distortion)</h2>
+        </div>
+        <div class="card-content">
+            <div class="control-group">
+                <label for="distortionType">Type</label>
+                <select id="distortionType">
+                    <option value="none">None</option>
+                    <option value="foldback">Foldback</option>
+                    <option value="sine">Sine Warp</option>
+                    <option value="glitch">Glitch Rectifier</option>
+                    <option value="overdrive">Gritty Overdrive</option>
+                    <option value="fuzz">Fuzz Buzz</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="distortionAmount">Amount</label>
+                <div class="slider-wrapper">
+                    <input type="range" id="distortionAmount" min="0" max="100" value="0">
+                    <span class="slider-label" id="distortionValue">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- === COLUMN 3: POST-PROCESSING & ACTIONS === -->
     <div class="main-col">
-        <div class="card">
-            <div class="card-header">
-                <h2>Weird Circuit (Distortion)</h2>
-            </div>
-            <div class="card-content">
-                <div class="control-group">
-                    <label for="distortionType">Type</label>
-                    <select id="distortionType">
-                        <option value="none">None</option>
-                        <option value="foldback">Foldback</option>
-                        <option value="sine">Sine Warp</option>
-                        <option value="glitch">Glitch Rectifier</option>
-                        <option value="overdrive">Gritty Overdrive</option>
-                        <option value="fuzz">Fuzz Buzz</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="distortionAmount">Amount</label>
-                    <div class="slider-wrapper">
-                        <input type="range" id="distortionAmount" min="0" max="100" value="0">
-                        <span class="slider-label" id="distortionValue">0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="card">
             <div class="card-header">
               <h2>Filters</h2>
@@ -565,15 +572,29 @@ canvas {
                 <div class="control-group">
                     <label for="lowpassCutoff">Low-Pass Cutoff</label>
                     <div class="slider-wrapper">
-                        <input type="range" id="lowpassCutoff" min="20" max="22000" value="22000" step="1">
+                        <input type="range" id="lowpassCutoff" min="0" max="1000" value="1000">
                         <span class="slider-label" id="lowpassValue">22kHz</span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="highpassCutoff">High-Pass Cutoff</label>
                     <div class="slider-wrapper">
-                        <input type="range" id="highpassCutoff" min="20" max="22000" value="20" step="1">
+                        <input type="range" id="highpassCutoff" min="0" max="1000" value="0">
                         <span class="slider-label" id="highpassValue">20Hz</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="card">
+            <div class="card-header">
+              <h2>Pitch Shift (Live)</h2>
+            </div>
+            <div class="card-content">
+                <div class="control-group">
+                    <label for="pitchSlider">Playback Rate</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="pitchSlider" min="0.5" max="2" value="1" step="0.01">
+                        <span class="slider-label" id="pitchValue">1.00x</span>
                     </div>
                 </div>
             </div>
@@ -588,6 +609,17 @@ canvas {
                     <div class="btn-group">
                         <button id="orderDegradeFirst" class="btn order-btn active">Degrade → Circuit → Filter</button>
                         <button id="orderFilterFirst" class="btn order-btn">Degrade → Filter → Circuit</button>
+                    </div>
+                </div>
+                 <div class="control-group">
+                    <label>Presets</label>
+                    <select id="presetList"></select>
+                    <div class="btn-group" style="margin-top: 0.5rem;">
+                         <button id="deletePresetBtn" class="btn" disabled>Delete</button>
+                    </div>
+                    <div class="btn-group" style="margin-top: 0.5rem;">
+                         <input type="text" id="presetName" placeholder="New Preset Name...">
+                         <button id="savePresetBtn" class="btn">Save</button>
                     </div>
                 </div>
                 <div class="action-buttons">
@@ -632,6 +664,12 @@ const highpassSlider = document.getElementById('highpassCutoff');
 const highpassValue = document.getElementById('highpassValue');
 const orderDegradeFirstBtn = document.getElementById('orderDegradeFirst');
 const orderFilterFirstBtn = document.getElementById('orderFilterFirst');
+const pitchSlider = document.getElementById('pitchSlider');
+const pitchValue = document.getElementById('pitchValue');
+const presetList = document.getElementById('presetList');
+const presetNameInput = document.getElementById('presetName');
+const savePresetBtn = document.getElementById('savePresetBtn');
+const deletePresetBtn = document.getElementById('deletePresetBtn');
 
 // === STATE VARIABLES ===
 let audioContext;
@@ -644,12 +682,16 @@ let animationId = null;
 let effectOrder = 'degrade_first';
 let playbackStartTime = 0;
 let startOffset = 0;
+let presets = {};
+const minFilterFreq = 20;
+const maxFilterFreq = 22000;
 
 // === INITIALIZATION ===
 function init() {
   resizeCanvases();
-  window.addEventListener('resize', resizeCanvases);
+  loadPresetsFromStorage();
   addEventListeners();
+  resetAllControls();
 }
 
 function resizeCanvases() {
@@ -666,17 +708,18 @@ function resizeCanvases() {
 
 // === EVENT LISTENERS ===
 function addEventListeners() {
+    window.addEventListener('resize', resizeCanvases);
+
     // Sliders
-    intensitySlider.addEventListener('input', () => { intensityValue.textContent = intensitySlider.value + '%'; });
-    distortionAmountSlider.addEventListener('input', () => { distortionValue.textContent = distortionAmountSlider.value + '%'; });
-    lowpassSlider.addEventListener('input', () => {
-        const freq = parseInt(lowpassSlider.value);
-        lowpassValue.textContent = freq < 1000 ? `${freq}Hz` : `${(freq/1000).toFixed(1)}kHz`;
+    intensitySlider.addEventListener('input', () => { intensityValue.textContent = `${intensitySlider.value}%`; });
+    distortionAmountSlider.addEventListener('input', () => { distortionValue.textContent = `${distortionAmountSlider.value}%`; });
+    pitchSlider.addEventListener('input', () => { 
+        const rate = parseFloat(pitchSlider.value);
+        pitchValue.textContent = `${rate.toFixed(2)}x`;
+        if(currentSource) currentSource.playbackRate.value = rate;
     });
-    highpassSlider.addEventListener('input', () => {
-        const freq = parseInt(highpassSlider.value);
-        highpassValue.textContent = freq < 1000 ? `${freq}Hz` : `${(freq/1000).toFixed(1)}kHz`;
-    });
+    lowpassSlider.addEventListener('input', () => updateFilterLabel(lowpassValue, linToLogFreq(lowpassSlider.value)));
+    highpassSlider.addEventListener('input', () => updateFilterLabel(highpassValue, linToLogFreq(highpassSlider.value)));
 
     // Buttons
     orderDegradeFirstBtn.addEventListener('click', () => setEffectOrder('degrade_first'));
@@ -688,18 +731,25 @@ function addEventListeners() {
     playOriginal.addEventListener('click', () => togglePlayback(originalBuffer, playOriginal, playheadOriginal));
     playProcessed.addEventListener('click', () => togglePlayback(processedBuffer, playProcessed, playheadProcessed));
 
+    // Presets
+    savePresetBtn.addEventListener('click', savePreset);
+    deletePresetBtn.addEventListener('click', deletePreset);
+    presetList.addEventListener('change', loadPreset);
+
     // Scrubbing
     wrapperOriginal.addEventListener('mousedown', (e) => handleScrub(e, originalBuffer, playOriginal, playheadOriginal));
     wrapperProcessed.addEventListener('mousedown', (e) => handleScrub(e, processedBuffer, playProcessed, playheadProcessed));
 
-    // Spacebar Play/Pause
+    // Keyboard Shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
             const targetButton = playProcessed.disabled ? playOriginal : playProcessed;
-            if (!targetButton.disabled) {
-                targetButton.click();
-            }
+            if (!targetButton.disabled) targetButton.click();
+        }
+        if (e.code === 'Enter' && e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            if (!processBtn.disabled) processBtn.click();
         }
     });
 }
@@ -738,7 +788,7 @@ async function handleFileUpload(e) {
     
     updateStatus('Audio loaded successfully', 'success');
   } catch (err) {
-    updateStatus('Error loading audio: ' + err.message, 'error');
+    updateStatus(`Error: ${err.message}`, 'error');
   }
 }
 
@@ -758,8 +808,8 @@ async function processAudio() {
     sourceNode.buffer = degradedBuffer;
 
     const distortionNode = createDistortionNode(offlineCtx);
-    const highpassNode = createFilterNode(offlineCtx, 'highpass', highpassSlider.value);
-    const lowpassNode = createFilterNode(offlineCtx, 'lowpass', lowpassSlider.value);
+    const highpassNode = createFilterNode(offlineCtx, 'highpass', linToLogFreq(highpassSlider.value));
+    const lowpassNode = createFilterNode(offlineCtx, 'lowpass', linToLogFreq(lowpassSlider.value));
 
     if (effectOrder === 'degrade_first') {
         sourceNode.connect(distortionNode).connect(highpassNode).connect(lowpassNode).connect(offlineCtx.destination);
@@ -779,7 +829,7 @@ async function processAudio() {
     updateStatus('Processing complete', 'success');
   } catch (err) {
     console.error(err);
-    updateStatus('Error: ' + err.message, 'error');
+    updateStatus(`Error: ${err.message}`, 'error');
   } finally {
     processBtn.disabled = false;
   }
@@ -787,17 +837,14 @@ async function processAudio() {
 
 function resampleAudio() {
     if (!processedBuffer) return;
-    
+    stopAudio();
     originalBuffer = processedBuffer;
     processedBuffer = null;
-
     drawWaveform(originalCanvas, originalBuffer);
     clearCanvas(processedCanvas);
-
     playProcessed.disabled = true;
     downloadBtn.disabled = true;
     resampleBtn.disabled = true;
-
     updateStatus('Resampled to input', 'success');
 }
 
@@ -816,6 +863,111 @@ function downloadAudio() {
   updateStatus('Download started', 'success');
 }
 
+// === PRESET MANAGEMENT ===
+
+function savePreset() {
+    const name = presetNameInput.value.trim();
+    if (!name) {
+        updateStatus('Please enter a preset name.', 'error');
+        return;
+    }
+    const settings = {
+        algorithm: algorithmSelect.value,
+        intensity: intensitySlider.value,
+        distortionType: distortionTypeSelect.value,
+        distortionAmount: distortionAmountSlider.value,
+        lowpass: linToLogFreq(lowpassSlider.value),
+        highpass: linToLogFreq(highpassSlider.value),
+        pitch: pitchSlider.value,
+        order: effectOrder,
+    };
+    presets[name] = settings;
+    localStorage.setItem('noiseForgePresets', JSON.stringify(presets));
+    populatePresetList();
+    presetList.value = name;
+    presetNameInput.value = '';
+    updateStatus(`Preset '${name}' saved.`, 'success');
+}
+
+function loadPreset() {
+    const name = presetList.value;
+    if (name === "__init__") {
+        resetAllControls();
+        updateStatus('Controls reset to default.', 'success');
+        return;
+    }
+
+    if (!name || !presets[name]) return;
+    const settings = presets[name];
+    
+    algorithmSelect.value = settings.algorithm;
+    intensitySlider.value = settings.intensity;
+    distortionTypeSelect.value = settings.distortionType;
+    distortionAmountSlider.value = settings.distortionAmount;
+    lowpassSlider.value = freqToLinValue(settings.lowpass);
+    highpassSlider.value = freqToLinValue(settings.highpass);
+    pitchSlider.value = settings.pitch;
+    setEffectOrder(settings.order);
+
+    // Update all UI labels from the new slider values
+    intensityValue.textContent = `${intensitySlider.value}%`;
+    distortionValue.textContent = `${distortionAmountSlider.value}%`;
+    updateFilterLabel(lowpassValue, settings.lowpass);
+    updateFilterLabel(highpassValue, settings.highpass);
+    pitchValue.textContent = `${parseFloat(pitchSlider.value).toFixed(2)}x`;
+    
+    updateStatus(`Preset '${name}' loaded.`, 'success');
+}
+
+function deletePreset() {
+    const name = presetList.value;
+    if (!name || name === "__init__" || !presets[name]) return;
+    if (confirm(`Are you sure you want to delete the preset '${name}'?`)) {
+        delete presets[name];
+        localStorage.setItem('noiseForgePresets', JSON.stringify(presets));
+        populatePresetList();
+        updateStatus(`Preset '${name}' deleted.`, 'success');
+    }
+}
+
+function loadPresetsFromStorage() {
+    const storedPresets = localStorage.getItem('noiseForgePresets');
+    if (storedPresets) {
+        presets = JSON.parse(storedPresets);
+    }
+    populatePresetList();
+}
+
+function populatePresetList() {
+    const currentVal = presetList.value;
+    presetList.innerHTML = '<option value="__init__">-- Initial State --</option>';
+    for (const name in presets) {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        presetList.appendChild(option);
+    }
+    presetList.value = currentVal; // try to restore previous selection
+    deletePresetBtn.disabled = presetList.value === "" || presetList.value === "__init__";
+}
+
+function resetAllControls() {
+    algorithmSelect.value = "am";
+    intensitySlider.value = 50;
+    distortionTypeSelect.value = "none";
+    distortionAmountSlider.value = 0;
+    lowpassSlider.value = 1000;
+    highpassSlider.value = 0;
+    pitchSlider.value = 1.0;
+    setEffectOrder('degrade_first');
+
+    intensityValue.textContent = "50%";
+    distortionValue.textContent = "0%";
+    updateFilterLabel(lowpassValue, maxFilterFreq);
+    updateFilterLabel(highpassValue, minFilterFreq);
+    pitchValue.textContent = "1.00x";
+}
+
 // === PLAYBACK & SCRUBBING ===
 
 function togglePlayback(buffer, button, playhead) {
@@ -832,10 +984,11 @@ function playAudio(buffer, button, playhead, offset = 0) {
 
   currentSource = audioContext.createBufferSource();
   currentSource.buffer = buffer;
+  currentSource.playbackRate.value = parseFloat(pitchSlider.value);
   currentSource.connect(audioContext.destination);
   
   startOffset = offset;
-  playbackStartTime = audioContext.currentTime - startOffset;
+  playbackStartTime = audioContext.currentTime - (startOffset / currentSource.playbackRate.value);
   currentSource.start(0, startOffset);
   
   button.classList.add('playing');
@@ -846,33 +999,25 @@ function playAudio(buffer, button, playhead, offset = 0) {
   updatePlayheadPosition();
   
   currentSource.onended = () => {
-    if (currentPlayButton === button) { // Ensure it's not an old onended event
-        stopAudio(true);
-    }
+    if (currentPlayButton === button) stopAudio(true);
   };
 }
 
 function stopAudio(finished = false) {
   if (currentSource) {
     currentSource.onended = null;
+    startOffset = finished ? 0 : (audioContext.currentTime - playbackStartTime) * currentSource.playbackRate.value;
     try { currentSource.stop(); } catch (e) {}
     currentSource = null;
   }
   
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
-  }
+  if (animationId) cancelAnimationFrame(animationId);
+  animationId = null;
   
-  if (currentPlayButton) {
-      currentPlayButton.classList.remove('playing');
-  }
+  if (currentPlayButton) currentPlayButton.classList.remove('playing');
   
   if (currentPlayhead) {
-    if (finished) {
-        startOffset = 0;
-        currentPlayhead.style.left = '0%';
-    }
+    if (finished) currentPlayhead.style.left = '0%';
     currentPlayhead.classList.remove('active');
   }
 
@@ -883,29 +1028,29 @@ function stopAudio(finished = false) {
 function updatePlayheadPosition() {
     if (!currentSource) return;
 
+    const rate = currentSource.playbackRate.value;
+    const effectiveDuration = currentSource.buffer.duration / rate;
     const elapsed = audioContext.currentTime - playbackStartTime;
-    const progress = (elapsed / currentSource.buffer.duration);
     
-    if (progress >= 1) {
-        // Handled by onended
-        return;
+    if (elapsed >= effectiveDuration) return; // onended will handle stopping
+    
+    if(currentPlayhead) {
+        const progress = (elapsed * rate) / currentSource.buffer.duration;
+        currentPlayhead.style.left = `${progress * 100}%`;
     }
-    
-    if(currentPlayhead) currentPlayhead.style.left = progress * 100 + '%';
     animationId = requestAnimationFrame(updatePlayheadPosition);
 }
 
 function handleScrub(event, buffer, button, playhead) {
     if (!buffer) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    
     const wasPlaying = button.classList.contains('playing');
 
     function calculateAndSeek(e) {
         const x = e.clientX - rect.left;
         const percentage = Math.max(0, Math.min(1, x / rect.width));
         startOffset = buffer.duration * percentage;
-        playhead.style.left = percentage * 100 + '%';
+        playhead.style.left = `${percentage * 100}%`;
         if (wasPlaying) {
             playAudio(buffer, button, playhead, startOffset);
         }
@@ -913,24 +1058,34 @@ function handleScrub(event, buffer, button, playhead) {
     
     calculateAndSeek(event);
 
-    const mouseMoveHandler = (e) => {
-        calculateAndSeek(e);
-    };
-
+    const mouseMoveHandler = (e) => calculateAndSeek(e);
     const mouseUpHandler = () => {
         window.removeEventListener('mousemove', mouseMoveHandler);
         window.removeEventListener('mouseup', mouseUpHandler);
     };
-
     window.addEventListener('mousemove', mouseMoveHandler);
     window.addEventListener('mouseup', mouseUpHandler);
 }
 
-// === UI & DRAWING ===
+// === UI & DRAWING & HELPERS ===
 
 function updateStatus(message, type = '') {
   status.textContent = message;
-  status.className = 'status ' + type;
+  status.className = `status ${type}`;
+}
+
+function updateFilterLabel(labelElement, freq) {
+    labelElement.textContent = freq < 1000 ? `${Math.round(freq)}Hz` : `${(freq/1000).toFixed(1)}kHz`;
+}
+
+function linToLogFreq(value) {
+    const pos = value / 1000.0;
+    return minFilterFreq * Math.pow(maxFilterFreq / minFilterFreq, pos);
+}
+
+function freqToLinValue(freq) {
+    const pos = Math.log(freq / minFilterFreq) / Math.log(maxFilterFreq / minFilterFreq);
+    return Math.round(pos * 1000);
 }
 
 function drawWaveform(canvas, buffer) {
@@ -951,8 +1106,7 @@ function drawWaveform(canvas, buffer) {
   const amp = height / 2;
   
   for (let i = 0; i < width; i++) {
-    let min = 1.0;
-    let max = -1.0;
+    let min = 1.0, max = -1.0;
     for (let j = 0; j < step; j++) {
       const datum = data[(i * step) + j];
       if (datum !== undefined) {
@@ -960,10 +1114,8 @@ function drawWaveform(canvas, buffer) {
         if (datum > max) max = datum;
       }
     }
-    const y1 = (1 + min) * amp;
-    const y2 = (1 + max) * amp;
-    ctx.moveTo(i, y1);
-    ctx.lineTo(i, y2);
+    ctx.moveTo(i, (1 + min) * amp);
+    ctx.lineTo(i, (1 + max) * amp);
   }
   ctx.stroke();
   
@@ -989,28 +1141,21 @@ function createFilterNode(context, type, frequency) {
     const filter = context.createBiquadFilter();
     filter.type = type;
     filter.frequency.value = frequency;
-    filter.Q.value = 0.7071; // Butterworth response
+    filter.Q.value = 0.7071;
     return filter;
 }
 
 function createDistortionNode(context) {
-    const type = distortionTypeSelect.value;
-    const amount = distortionAmountSlider.value / 100;
-
+    const type = distortionTypeSelect.value, amount = distortionAmountSlider.value / 100;
     if (type === 'none' || amount === 0) return context.createGain();
-
-    const distortion = context.createWaveShaper();
-    const curve = new Float32Array(4096);
-    const k = amount * 100;
-
+    const distortion = context.createWaveShaper(), curve = new Float32Array(4096), k = amount * 100;
     switch (type) {
-        case 'foldback': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; const th = 1 - (amount * 0.9); curve[i] = Math.max(-1, Math.min(1, x - (Math.max(0, x - th) * 2) + (Math.min(0, x + th) * 2))); } break;
+        case 'foldback': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, th = 1 - (amount * 0.9); curve[i] = Math.max(-1, Math.min(1, x - (Math.max(0, x - th) * 2) + (Math.min(0, x + th) * 2))); } break;
         case 'sine': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; curve[i] = Math.sin(x * (1 + k * 0.1) * Math.PI / 2); } break;
-        case 'glitch': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; const th = 1 - amount; curve[i] = x > th ? 1 : (x < -th ? -1 : 0); } break;
+        case 'glitch': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, th = 1 - amount; curve[i] = x > th ? 1 : (x < -th ? -1 : 0); } break;
         case 'overdrive': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; curve[i] = ((1 + k/25) * x) / (1 + (k/25) * Math.abs(x)); } break;
-        case 'fuzz': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1; const y = x * (k + 1); curve[i] = (y > 0 ? 1 : -1) * (1 - Math.exp(-Math.abs(y))); } break;
+        case 'fuzz': for (let i = 0; i < 4096; i++) { const x = i * 2 / 4096 - 1, y = x * (k + 1); curve[i] = (y > 0 ? 1 : -1) * (1 - Math.exp(-Math.abs(y))); } break;
     }
-    
     distortion.curve = curve;
     distortion.oversample = '4x';
     return distortion;
@@ -1019,82 +1164,54 @@ function createDistortionNode(context) {
 async function applyAlgorithm(buffer, algo, intensity) {
   const newBuffer = audioContext.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
   for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
-    const input = buffer.getChannelData(ch);
-    const output = newBuffer.getChannelData(ch);
+    const input = buffer.getChannelData(ch), output = newBuffer.getChannelData(ch);
+    if (algo === 'base64') { base64Bloat(input, output, intensity); continue; }
     switch (algo) {
-      case 'am': amModulator(input, output, intensity); break;
-      case 'fm': fmDrifter(input, output, intensity); break;
-      case 'spec': spectrogramCrush(input, output, intensity); break;
-      case 'midi': midiMorph(input, output, intensity); break;
-      case 'base64': base64Bloat(input, output, intensity); break;
-      case 'json': jsonJam(input, output, intensity); break;
-      case 'ascii': asciiWave(input, output, intensity); break;
-      case 'qr': qrCodeSqueeze(input, output, intensity); break;
-      case 'svg': svgEtch(input, output, intensity); break;
-      case 'hex': hexToFont(input, output, intensity); break;
-      case 'csv': csvScatter(input, output, intensity); break;
-      case 'emoji': emojiPulse(input, output, intensity); break;
-      case 'pcm': rawPcmBitcrush(input, output, intensity); break;
-      case 'mp3': mp3Crush(input, output, intensity); break;
-      case 'ogg': oggCrunch(input, output, intensity, buffer.sampleRate); break;
-      case 'aiff': aiffEndianSwap(input, output, intensity); break;
-      case 'aac': aacFizz(input, output, intensity); break;
-      case 'mod': modResampler(input, output, intensity); break;
-      case 'sysex': sysexWarp(input, output, intensity); break;
-      case 'vhs': vhsWap(input, output, intensity, buffer.sampleRate); break;
-      case 'cassette': cassetteFlutter(input, output, intensity); break;
-      case 'telephone': telephoneLine(input, output, intensity); break;
-      case 'packetloss': packetLossGlitch(input, output, intensity); break;
-      case 'jpeg': jpegArtifact(input, output, intensity); break;
-      case 'bitrot': bitRot(input, output, intensity); break;
-      case 'vinyl': vinylCrackle(input, output, intensity); break;
+      case 'am': amModulator(input, output, intensity); break; case 'fm': fmDrifter(input, output, intensity); break; case 'spec': spectrogramCrush(input, output, intensity); break; case 'midi': midiMorph(input, output, intensity); break; case 'json': jsonJam(input, output, intensity); break; case 'ascii': asciiWave(input, output, intensity); break; case 'qr': qrCodeSqueeze(input, output, intensity); break; case 'svg': svgEtch(input, output, intensity); break; case 'hex': hexToFont(input, output, intensity); break; case 'csv': csvScatter(input, output, intensity); break; case 'emoji': emojiPulse(input, output, intensity); break; case 'pcm': rawPcmBitcrush(input, output, intensity); break; case 'mp3': mp3Crush(input, output, intensity); break; case 'ogg': oggCrunch(input, output, intensity, buffer.sampleRate); break; case 'aiff': aiffEndianSwap(input, output, intensity); break; case 'aac': aacFizz(input, output, intensity); break; case 'mod': modResampler(input, output, intensity); break; case 'sysex': sysexWarp(input, output, intensity); break; case 'vhs': vhsWarp(input, output, intensity, buffer.sampleRate); break; case 'cassette': cassetteFlutter(input, output, intensity); break; case 'telephone': telephoneLine(input, output, intensity); break; case 'packetloss': packetLossGlitch(input, output, intensity); break; case 'jpeg': jpegArtifact(input, output, intensity); break; case 'bitrot': bitRot(input, output, intensity); break; case 'vinyl': vinylCrackle(input, output, intensity); break;
     }
   }
   return newBuffer;
 }
 
-// ... All other degradation algorithm functions (amModulator, fmDrifter, etc.) remain here unchanged ...
-function amModulator(input, output, intensity) { const modFreq = 50 + intensity * 500; for (let i = 0; i < input.length; i++) { const mod = Math.sin(i / modFreq) * (1 + intensity * 2); const noise = (Math.random() - 0.5) * intensity * 0.5; output[i] = Math.tanh(input[i] * mod + noise); } }
-function fmDrifter(input, output, intensity) { let phase = 0; const drift = intensity * 0.01; for (let i = 0; i < input.length; i++) { phase += input[i] * drift + Math.random() * intensity * 0.001; output[i] = Math.sin(phase) * 0.8; } }
-function spectrogramCrush(input, output, intensity) { const blockSize = Math.floor(32 + intensity * 200); for (let i = 0; i < input.length; i += blockSize) { let avg = 0; for (let j = 0; j < blockSize && i + j < input.length; j++) { avg += input[i + j]; } avg /= blockSize; avg = Math.round(avg * (100 - intensity * 90)) / (100 - intensity * 90); for (let j = 0; j < blockSize && i + j < input.length; j++) { output[i + j] = avg + (Math.random() - 0.5) * intensity * 0.1; } } }
-function midiMorph(input, output, intensity) { for (let i = 0; i < input.length; i++) { const note = Math.round((input[i] + 1) * 63.5); const quantized = (note + Math.floor(Math.random() * intensity * 12)) / 127 * 2 - 1; output[i] = quantized; } }
-function base64Bloat(input, output, intensity) { const str = Array.from(input).map(v => String.fromCharCode(Math.floor((v + 1) * 127.5))).join(''); const b64 = btoa(str.slice(0, Math.floor(str.length / (1 + intensity)))); const decoded = atob(b64); for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * decoded.length); output[i] = (decoded.charCodeAt(idx % decoded.length) / 127.5 - 1) * (1 - intensity * 0.3); } }
-function jsonJam(input, output, intensity) { const step = Math.max(1, Math.floor(intensity * 50)); const arr = []; for (let i = 0; i < input.length; i += step) { arr.push(parseFloat(input[i].toFixed(3 - Math.floor(intensity * 2)))); } const json = JSON.stringify(arr); const parsed = JSON.parse(json); for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * parsed.length); output[i] = parsed[idx] || 0; } }
-function asciiWave(input, output, intensity) { const chars = ' .-:=+*#%@'; const ascii = []; for (let i = 0; i < input.length; i += Math.max(1, Math.floor(10 - intensity * 9))) { const idx = Math.floor((input[i] + 1) * 0.5 * (chars.length - 1)); ascii.push(chars[idx]); } for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * ascii.length); const charIdx = chars.indexOf(ascii[idx % ascii.length]); output[i] = (charIdx / chars.length) * 2 - 1; } }
-function qrCodeSqueeze(input, output, intensity) { const bytes = new Uint8Array(Math.floor(input.length * (1 - intensity * 0.7))); for (let i = 0; i < bytes.length; i++) { const idx = Math.floor(i / bytes.length * input.length); bytes[i] = Math.floor((input[idx] + 1) * 127.5); } for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * bytes.length); output[i] = (bytes[idx] / 127.5 - 1) + (Math.random() - 0.5) * intensity * 0.3; } }
-function svgEtch(input, output, intensity) { const points = Math.max(10, Math.floor(input.length / (10 + intensity * 1000))); const simplified = []; for (let i = 0; i < points; i++) { const idx = Math.floor(i / points * input.length); simplified.push(input[idx]); } for (let i = 0; i < output.length; i++) { const t = i / output.length * (simplified.length - 1); const idx = Math.floor(t); const frac = t - idx; const a = simplified[idx] || 0; const b = simplified[Math.min(idx + 1, simplified.length - 1)] || 0; output[i] = a + (b - a) * frac; } }
-function hexToFont(input, output, intensity) { const hex = Array.from(input).map(v => Math.floor((v + 1) * 127.5).toString(16).padStart(2, '0')).join(''); const compressed = hex.slice(0, Math.floor(hex.length * (1 - intensity * 0.6))); for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * compressed.length); const code = parseInt(compressed.substr(idx % compressed.length, 2), 16) || 0; output[i] = (code / 127.5 - 1) * (1 - intensity * 0.2); } }
-function csvScatter(input, output, intensity) { const rows = []; const step = Math.max(1, Math.floor(1 + intensity * 20)); for (let i = 0; i < input.length; i += step) { rows.push(input[i].toFixed(4 - Math.floor(intensity * 3))); } const csv = rows.join(','); const parsed = csv.split(',').map(parseFloat); for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * parsed.length); output[i] = parsed[idx] || 0; } }
-function emojiPulse(input, output, intensity) { const emojis = ['😴', '😐', '😊', '😃', '😄', '🤩', '🔥', '💥', '⚡']; const emojiData = []; for (let i = 0; i < input.length; i += Math.max(1, Math.floor(10 - intensity * 8))) { const idx = Math.floor((input[i] + 1) * 0.5 * (emojis.length - 1)); emojiData.push(emojis[idx]); } const str = emojiData.join(''); for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / output.length * str.length); const charCode = str.charCodeAt(idx % str.length); output[i] = ((charCode % 256) / 127.5 - 1) * (1 - intensity * 0.4); } }
-function rawPcmBitcrush(input, output, intensity) { const bits = 16 - Math.floor(intensity * 15); const steps = Math.pow(2, bits); for (let i = 0; i < input.length; i++) { const val = (input[i] + 1) / 2; const quantized = Math.round(val * (steps - 1)) / (steps - 1); output[i] = quantized * 2 - 1; } }
-function mp3Crush(input, output, intensity) { const crush = 12 - Math.floor(intensity * 10); const steps = Math.pow(2, crush); const windowSize = Math.floor(intensity * 20); for (let i = 0; i < input.length; i++) { let avg = 0; for (let j = 0; j < windowSize; j++) { avg += input[Math.max(0, i - j)] || 0; } avg /= windowSize; const quantized = Math.round(avg * steps) / steps; output[i] = quantized; } }
-function oggCrunch(input, output, intensity, sampleRate) { const lfoFreq = 0.1 + intensity * 8; const lfoPeriod = sampleRate / lfoFreq; for (let i = 0; i < input.length; i++) { const mod = (Math.sin(i / lfoPeriod * 2 * Math.PI) + 1) / 2; const currentIntensity = intensity * mod; const bits = 16 - Math.floor(currentIntensity * 14); const steps = Math.pow(2, bits); output[i] = Math.round(input[i] * steps) / steps; } }
-function aiffEndianSwap(input, output, intensity) { const chunkSize = Math.max(2, Math.floor((1 - intensity) * 80 + 2)); for (let i = 0; i < input.length; i += chunkSize) { for (let j = 0; j < chunkSize; j++) { if (i + j < input.length) { output[i + j] = input[i + (chunkSize - 1 - j)]; } } } }
-function aacFizz(input, output, intensity) { const fizzChance = intensity * 0.05; const fizzLength = Math.floor(intensity * 50); for (let i = 0; i < input.length; i++) { if (Math.random() < fizzChance) { for (let j = 0; j < fizzLength && i + j < input.length; j++) { output[i + j] = Math.random() * 2 - 1; } i += fizzLength -1; } else { output[i] = input[i]; } } }
-function modResampler(input, output, intensity) { const step = 1 + Math.floor(intensity * 80); const downsampled = []; for (let i = 0; i < input.length; i += step) { downsampled.push(input[i]); } const bits = 8 - Math.floor(intensity * 6); const steps = Math.pow(2, bits); for (let i = 0; i < downsampled.length; i++) { downsampled[i] = Math.round(downsampled[i] * steps) / steps; } for (let i = 0; i < output.length; i++) { const idx = Math.floor(i / step); output[i] = downsampled[Math.min(idx, downsampled.length - 1)] || 0; } }
-function sysexWarp(input, output, intensity) { const midiValues = []; const step = Math.max(1, Math.floor(10 - intensity * 9)); for (let i = 0; i < input.length; i += step) { midiValues.push(Math.floor((input[i] + 1) * 63.5)); } const warpAmount = Math.floor(intensity * 50); const warped = midiValues.map(v => (v + (Math.random() - 0.5) * warpAmount) % 128); for (let i = 0; i < output.length; i++) { const t = i / output.length * (warped.length - 1); const idx = Math.floor(t); const frac = t - idx; const a = warped[idx] || 0; const b = warped[Math.min(idx + 1, warped.length - 1)] || 0; const interpolated = a + (b - a) * frac; output[i] = (interpolated / 63.5) - 1; } }
-function vhsWap(input, output, intensity, sampleRate) { const lfoFreq = 0.2 + intensity * 4; const lfoPeriod = sampleRate / lfoFreq; const maxOffset = Math.floor(intensity * 150); const noiseLevel = intensity * 0.05; for (let i = 0; i < input.length; i++) { const lfo = Math.sin(i / lfoPeriod * 2 * Math.PI); const offset = Math.round(lfo * maxOffset); const readPos = Math.max(0, Math.min(input.length - 1, i + offset)); const noise = (Math.random() - 0.5) * noiseLevel; output[i] = input[readPos] + noise; } }
-function cassetteFlutter(input, output, intensity) { let lastOut = 0; const alpha = 1 - (intensity * 0.8); const flutterAmount = intensity * 0.005; let phase = 0; for (let i = 0; i < input.length; i++) { const filtered = input[i] * alpha + lastOut * (1 - alpha); lastOut = filtered; phase += (Math.random() - 0.5) * flutterAmount; output[i] = Math.sin(Math.PI * (filtered + phase)); } }
-function telephoneLine(input, output, intensity) { let l = 0, h = 0; const l_alpha = 0.9; const h_alpha = 0.1; const bits = 4 - Math.floor(intensity * 2); const steps = Math.pow(2, bits); for (let i = 0; i < input.length; i++) { l = l + h_alpha * (input[i] - l); h = h * l_alpha + (1 - l_alpha) * l; const val = (h + 1) / 2; const quantized = Math.round(val * (steps - 1)) / (steps - 1); output[i] = (quantized * 2 - 1) * 0.8; } }
-function packetLossGlitch(input, output, intensity) { const dropChance = intensity * 0.01; const maxDropLength = Math.floor(intensity * 2000); for (let i = 0; i < input.length; i++) { if (Math.random() < dropChance) { const dropLength = Math.floor(Math.random() * maxDropLength); for (let j = 0; j < dropLength && i + j < input.length; j++) { output[i + j] = 0; } i += dropLength - 1; } else { output[i] = input[i]; } } }
-function jpegArtifact(input, output, intensity) { const blockSize = Math.max(2, Math.floor(200 - intensity * 198)); for (let i = 0; i < input.length; i += blockSize) { let sum = 0; let count = 0; for (let j = 0; j < blockSize && i + j < input.length; j++) { sum += input[i + j]; count++; } const avg = sum / count; const steps = 16 - Math.floor(intensity * 14); const quantizedAvg = Math.round(avg * steps) / steps; for (let j = 0; j < blockSize && i + j < input.length; j++) { output[i + j] = quantizedAvg; } } }
-function bitRot(input, output, intensity) { const rotChance = intensity * 0.1; const rotMagnitude = intensity * 0.1; for (let i = 0; i < input.length; i++) { if (Math.random() < rotChance) { const rot = (Math.random() - 0.5) * rotMagnitude; output[i] = Math.max(-1, Math.min(1, input[i] + rot)); } else { output[i] = input[i]; } } }
-function vinylCrackle(input, output, intensity) { const hissLevel = intensity * 0.02; const rumbleLevel = intensity * 0.015; const clickChance = intensity * 0.001; const clickLevel = 0.2 + intensity * 0.8; let rumble = 0; for (let i = 0; i < input.length; i++) { const hiss = (Math.random() - 0.5) * hissLevel; rumble += (Math.random() - 0.5) * 0.01; rumble *= 0.995; let click = 0; if (Math.random() < clickChance) { click = (Math.random() * 0.5 + 0.5) * clickLevel; } output[i] = Math.max(-1, Math.min(1, input[i] + hiss + (rumble * rumbleLevel) + click)); } }
+// ... All other degradation algorithm functions (minified) remain here...
+function base64Bloat(i,o,n){const t=new Uint8Array(i.length);for(let e=0;e<i.length;e++)t[e]=Math.floor(127.5*(i[e]+1));let e="";const s=Math.floor(t.length/(1+n));for(let i=0;i<s;i++)e+=String.fromCharCode(t[i]);try{const t=btoa(e),n=atob(t);for(let e=0;e<o.length;e++){const i=Math.floor(e/o.length*n.length);o[e]=n.length>0?(n.charCodeAt(i%n.length)/127.5-1)*(1-.3*0):0}}catch(t){console.error("Base64 encoding failed, falling back.",t);for(let t=0;t<i.length;t++)o[t]=i[t]}}
+function amModulator(i,o,n){const t=50+500*n;for(let e=0;e<i.length;e++){const s=Math.sin(e/t)*(1+2*n),a=(Math.random()-.5)*n*.5;o[e]=Math.tanh(i[e]*s+a)}}
+function fmDrifter(i,o,n){let t=0;const e=n*.01;for(let s=0;s<i.length;s++)t+=i[s]*e+Math.random()*n*.001,o[s]=.8*Math.sin(t)}
+function spectrogramCrush(i,o,n){const t=Math.floor(32+200*n);for(let e=0;e<i.length;e+=t){let s=0;for(let n=0;n<t&&e+n<i.length;n++)s+=i[e+n];s/=t,s=Math.round(s*(100-90*n))/(100-90*n);for(let a=0;a<t&&e+a<i.length;a++)o[e+a]=s+(Math.random()-.5)*n*.1}}
+function midiMorph(i,o,n){for(let t=0;t<i.length;t++){const e=Math.round(63.5*(i[t]+1));o[t]=2*((e+Math.floor(Math.random()*n*12))/127)-1}}
+function jsonJam(i,o,n){const t=Math.max(1,Math.floor(50*n)),e=[];for(let s=0;s<i.length;s+=t)e.push(parseFloat(i[s].toFixed(3-Math.floor(2*n))));const s=JSON.stringify(e),a=JSON.parse(s);for(let t=0;t<o.length;t++){const e=Math.floor(t/o.length*a.length);o[t]=a[e]||0}}
+function asciiWave(i,o,n){const t=" .-:=+*#%@",e=[];for(let s=0;s<i.length;s+=Math.max(1,Math.floor(10-9*n))){const o=Math.floor(.5*(i[s]+1)*(t.length-1));e.push(t[o])}for(let n=0;n<o.length;n++){const i=Math.floor(n/o.length*e.length),s=t.indexOf(e[i%e.length]);o[n]=2*(s/t.length)-1}}
+function qrCodeSqueeze(i,o,n){const t=new Uint8Array(Math.floor(i.length*(1-.7*n)));for(let e=0;e<t.length;e++){const o=Math.floor(e/t.length*i.length);t[e]=Math.floor(127.5*(i[o]+1))}for(let e=0;e<o.length;e++){const t=Math.floor(e/o.length*i.length);o[e]=i[t]/127.5-1+(Math.random()-.5)*n*.3}}
+function svgEtch(i,o,n){const t=Math.max(10,Math.floor(i.length/(10+1e3*n))),e=[];for(let s=0;s<t;s++){const o=Math.floor(s/t*i.length);e.push(i[o])}for(let n=0;n<o.length;n++){const i=n/o.length*(e.length-1),t=Math.floor(i),s=i-t,a=e[t]||0,r=e[Math.min(t+1,e.length-1)]||0;o[n]=a+(r-a)*s}}
+function hexToFont(i,o,n){const t=Array.from(i).map(i=>Math.floor(127.5*(i+1)).toString(16).padStart(2,"0")).join(""),e=t.slice(0,Math.floor(t.length*(1-.6*n)));for(let i=0;i<o.length;i++){const t=Math.floor(i/o.length*e.length),s=parseInt(e.substr(t%e.length,2),16)||0;o[i]=(s/127.5-1)*(1-.2*n)}}
+function csvScatter(i,o,n){const t=[],e=Math.max(1,Math.floor(1+20*n));for(let s=0;s<i.length;s+=e)t.push(i[s].toFixed(4-Math.floor(3*n)));const s=t.join(","),a=s.split(",").map(parseFloat);for(let t=0;t<o.length;t++){const e=Math.floor(t/o.length*a.length);o[t]=a[e]||0}}
+function emojiPulse(i,o,n){const t=["😴","😐","😊","😃","😄","🤩","🔥","💥","⚡"],e=[];for(let s=0;s<i.length;s+=Math.max(1,Math.floor(10-8*n))){const o=Math.floor(.5*(i[s]+1)*(t.length-1));e.push(t[o])}const s=e.join("");for(let t=0;t<o.length;t++){const e=Math.floor(t/o.length*s.length),a=s.charCodeAt(e%s.length);o[t]=(a%256/127.5-1)*(1-.4*n)}}
+function rawPcmBitcrush(i,o,n){const t=16-Math.floor(15*n),e=Math.pow(2,t);for(let s=0;s<i.length;s++){const n=(i[s]+1)/2,t=Math.round(n*(e-1))/(e-1);o[s]=2*t-1}}
+function mp3Crush(i,o,n){const t=12-Math.floor(10*n),e=Math.pow(2,t),s=Math.floor(20*n);for(let a=0;a<i.length;a++){let n=0;for(let o=0;o<s;o++)n+=i[Math.max(0,a-o)]||0;n/=s;const r=Math.round(n*e)/e;o[a]=r}}
+function oggCrunch(i,o,n,t){const e=.1+8*n,s=t/e;for(let a=0;a<i.length;a++){const t=(Math.sin(a/s*2*Math.PI)+1)/2,e=n*t,r=16-Math.floor(14*e),l=Math.pow(2,r);o[a]=Math.round(i[a]*l)/l}}
+function aiffEndianSwap(i,o,n){const t=Math.max(2,Math.floor(80*(1-n)+2));for(let e=0;e<i.length;e+=t)for(let s=0;s<t;s++)e+s<i.length&&(o[e+s]=i[e+(t-1-s)])}
+function aacFizz(i,o,n){const t=n*.05,e=Math.floor(50*n);for(let s=0;s<i.length;s++)if(Math.random()<t){for(let n=0;n<e&&s+n<i.length;n++)o[s+n]=2*Math.random()-1;s+=e-1}else o[s]=i[s]}
+function modResampler(i,o,n){const t=1+Math.floor(80*n),e=[];for(let s=0;s<i.length;s+=t)e.push(i[s]);const s=8-Math.floor(6*n),a=Math.pow(2,s);for(let i=0;i<e.length;i++)e[i]=Math.round(e[i]*a)/a;for(let n=0;n<o.length;n++){const i=Math.floor(n/t);o[n]=e[Math.min(i,e.length-1)]||0}}
+function sysexWarp(i,o,n){const t=[],e=Math.max(1,Math.floor(10-9*n));for(let s=0;s<i.length;s+=e)t.push(Math.floor(63.5*(i[s]+1)));const s=Math.floor(50*n),a=t.map(i=>(i+(Math.random()-.5)*s)%128);for(let n=0;n<o.length;n++){const i=n/o.length*(a.length-1),t=Math.floor(i),e=i-t,s=a[t]||0,r=a[Math.min(t+1,a.length-1)]||0,l=s+(r-s)*e;o[n]=l/63.5-1}}
+function vhsWarp(i,o,n,t){const e=.2+4*n,s=t/e,a=Math.floor(150*n),r=n*.05;for(let l=0;l<i.length;l++){const n=Math.sin(l/s*2*Math.PI),t=Math.round(n*a),e=Math.max(0,Math.min(i.length-1,l+t)),c=(Math.random()-.5)*r;o[l]=i[e]+c}}
+function cassetteFlutter(i,o,n){let t=0;const e=1-.8*n,s=.005*n;let a=0;for(let r=0;r<i.length;r++){const n=i[r]*e+t*(1-e);t=n,a+=(Math.random()-.5)*s,o[r]=Math.sin(Math.PI*(n+a))}}
+function telephoneLine(i,o,n){let t=0,e=0;const s=.9,a=.1,r=4-Math.floor(2*n),l=Math.pow(2,r);for(let c=0;c<i.length;c++){t+=a*(i[c]-t),e=e*s+(1-s)*t;const n=(e+1)/2,h=Math.round(n*(l-1))/(l-1);o[c]=.8*(2*h-1)}}
+function packetLossGlitch(i,o,n){const t=n*.01,e=Math.floor(2e3*n);for(let s=0;s<i.length;s++)if(Math.random()<t){const n=Math.floor(Math.random()*e);for(let t=0;t<n&&s+t<i.length;t++)o[s+t]=0;s+=n-1}else o[s]=i[s]}
+function jpegArtifact(i,o,n){const t=Math.max(2,Math.floor(200-198*n));for(let e=0;e<i.length;e+=t){let s=0,a=0;for(let o=0;o<t&&e+o<i.length;o++)s+=i[e+o],a++;const r=s/a,l=16-Math.floor(14*n),c=Math.round(r*l)/l;for(let n=0;n<t&&e+n<i.length;n++)o[e+n]=c}}
+function bitRot(i,o,n){const t=.1*n,e=.1*n;for(let s=0;s<i.length;s++)o[s]=Math.random()<t?Math.max(-1,Math.min(1,i[s]+(Math.random()-.5)*e)):i[s]}
+function vinylCrackle(i,o,n){const t=.02*n,e=.015*n,s=.001*n,a=.2+.8*n;let r=0;for(let l=0;l<i.length;l++){const n=(Math.random()-.5)*t;r+=.01*(Math.random()-.5),r*=.995;let c=0;Math.random()<s&&(c=(.5*Math.random()+.5)*a),o[l]=Math.max(-1,Math.min(1,i[l]+n+r*e+c))}}
 
 // === WAV CONVERSION ===
 function bufferToWav(buffer) {
-  const numChannels = buffer.numberOfChannels, sampleRate = buffer.sampleRate, format = 1, bitDepth = 16;
+  const numChannels = buffer.numberOfChannels, sampleRate = buffer.sampleRate, bitDepth = 16;
   const bytesPerSample = bitDepth / 8, blockAlign = numChannels * bytesPerSample;
   let result = new Float32Array(buffer.length * numChannels);
   for (let ch = 0; ch < numChannels; ch++) {
     const channelData = buffer.getChannelData(ch);
-    for (let i = 0; i < buffer.length; i++) {
-      result[i * numChannels + ch] = channelData[i];
-    }
+    for (let i = 0; i < buffer.length; i++) result[i * numChannels + ch] = channelData[i];
   }
   const dataLength = result.length * bytesPerSample;
-  const bufferLength = 44 + dataLength;
-  const arrayBuffer = new ArrayBuffer(bufferLength);
+  const arrayBuffer = new ArrayBuffer(44 + dataLength);
   const view = new DataView(arrayBuffer);
   const writeString = (offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
   writeString(0, 'RIFF');
@@ -1102,7 +1219,7 @@ function bufferToWav(buffer) {
   writeString(8, 'WAVE');
   writeString(12, 'fmt ');
   view.setUint32(16, 16, true);
-  view.setUint16(20, format, true);
+  view.setUint16(20, 1, true);
   view.setUint16(22, numChannels, true);
   view.setUint32(24, sampleRate, true);
   view.setUint32(28, sampleRate * blockAlign, true);
